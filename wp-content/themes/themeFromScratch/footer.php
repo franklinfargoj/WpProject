@@ -1,25 +1,24 @@
+<footer>
 
-<footer class="blog-footer">
-
-    <nav class="site-nav">
+    <nav class="navbar navbar-expand-sm bg-light">
         <?php
         $args = array(
-            'theme_location' => 'footer'
+            'theme_location' => 'footer',
+            'container' => 'ul ',
+            'menu_class' => 'nav navbar-nav menu ml-auto'
         );
         ?>
+
         <?php wp_nav_menu($args); ?>
     </nav>
 
-    <p>
-        <a href="#">Back to top</a>
-    </p>
 </footer>
+
+
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
-
-
 
 <!-- Basic stylesheet -->
 <link rel="stylesheet" href="<?php echo get_site_url(); ?>/wp-content/themes/themeFromScratch/JS/owl.carousel.css">

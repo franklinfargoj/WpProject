@@ -22,32 +22,57 @@
 
 
 
-<div id="app" class="container">
-       <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-           <div class="container-fluid">
-                    <div class="navbar-header">
-                        <?php if(has_custom_logo()) {
-                            the_custom_logo();
-                        } else { ?>
-                            <a href="<?php echo get_option('home'); ?>"><?php bloginfo('name'); ?></a>
-                            <?php
-                        }
-                        ?>
-                        <h5> <?php bloginfo('description'); ?></h5>
-                    </div>
-               <ul class="navbar-nav">
-                   <li>
-                       <?php
-                       $args = array(
-                           'theme_location' => 'primary'
-                       );
-                       ?>
-                       <?php wp_nav_menu($args); ?>
-                   </li>
-               </ul>
-           </div>
-       </nav>
-</div>
+  <nav class="navbar navbar-expand-sm bg-light">
+      <div class="navbar-header">
+          <?php if(has_custom_logo()) {
+              the_custom_logo();
+          } else { ?>
+              <a href="<?php echo get_option('home'); ?>"><?php bloginfo('name'); ?></a>
+              <?php
+          }
+          ?>
+          <h5> <?php bloginfo('description'); ?></h5>
+      </div>
+
+      <?php
+          $args = array(
+              'theme_location' => 'primary',
+              'container' => 'ul',
+              'menu_class' => 'nav navbar-nav menu ml-auto'
+          );
+      ?>
+      <?php wp_nav_menu($args); ?>
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

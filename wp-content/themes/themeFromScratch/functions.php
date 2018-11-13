@@ -64,13 +64,11 @@ add_action( 'widgets_init', 'my_custom_sidebar' );
 
 //custom logo
 function theme_prefix_setup() {
-
     add_theme_support( 'custom-logo', array(
         'height'      => 100,
         'width'       => 400,
         'flex-width' => true,
     ) );
-
 }
 add_action( 'after_setup_theme', 'theme_prefix_setup' );
 
@@ -84,6 +82,25 @@ function my_custom_menus() {
     );
 }
 add_action( 'init', 'my_custom_menus' );
+
+
+//copyright symbol and current year
+add_shortcode('copyright-year', function($atts, $content)
+{
+    extract(shortcode_atts(array(
+        'sign' => 'true',
+        'start' => '',
+    ), $atts));
+
+    $current_year = date('Y');
+    $print_sign = ($sign === 'true') ? '&copy;' : '';
+
+    if($start === $current_year || $start === '')
+        return "{$print_sign} {$current_year}";
+    else
+        return "{$print_sign} {$start} - {$current_year}";
+});
+
 
 
 ?>

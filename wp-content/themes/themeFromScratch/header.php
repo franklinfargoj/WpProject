@@ -38,7 +38,7 @@
           $args = array(
               'theme_location' => 'primary',
               'container' => 'ul',
-              'menu_class' => 'nav navbar-nav menu ml-auto'
+              'menu_class' => 'nav nav-tabs menu ml-auto'
           );
       ?>
       <?php wp_nav_menu($args); ?>

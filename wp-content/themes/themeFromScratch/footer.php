@@ -1,14 +1,16 @@
 <footer>
 
     <nav class="navbar navbar-expand-sm bg-light">
+        <ul class="ml-auto">
+            <?php echo do_shortcode('[copyright-year]');  ?> Mercedes-Benz India Pvt. Ltd. All Rights Reserved (provider)
+        </ul>
         <?php
         $args = array(
             'theme_location' => 'footer',
             'container' => 'ul ',
-            'menu_class' => 'nav navbar-nav menu ml-auto'
+            'menu_class' => 'nav nav-tabs menu ml-auto'
         );
         ?>
-
         <?php wp_nav_menu($args); ?>
     </nav>
 

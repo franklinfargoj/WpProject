@@ -19,7 +19,29 @@ Version:
 }
 
 
+#menu ul{
+    list-style: none;
+}
+#menu li{
+    display: inline;
+}
 
 
 
+#navmenu ul {
+    margin: 10px;
+    padding: 20px;
+    list-style-type: none;
+    list-style-image: none;
+}
 
+
+#menu-primary-menu-links li a {
+    padding-left: 10px;
+    padding-right: 12px;
+}
+
+#menu-footer-menu-link li a {
+    padding-left: 10px;
+    padding-right: 10px;
+}

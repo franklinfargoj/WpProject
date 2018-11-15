@@ -1,6 +1,7 @@
 <?php get_header(); ?>
 
-<div id="owl-demo" class="carousel slide" data-ride="carousel" xmlns="http://www.w3.org/1999/html">
+<div id="owl-demo" class="carousel slide" data-ride="carousel" xmlns="http://www.w3.org/1999/html"
+     xmlns="http://www.w3.org/1999/html">
         <?php
         $query = new WP_Query( array( 'post_type' => 'carosal', 'paged' => $paged ) );
         if ( $query->have_posts() ) : ?>
@@ -14,12 +15,12 @@
 <body>
 <div class="container">
     <div class="row">
+
         <div class="col-lg-2">
             <?php get_sidebar(); ?>
         </div>
 
-
-        <ul class="col-lg-8">
+        <div class="col-lg-8">
             <?php
             if ( have_posts() ) {
                 while ( have_posts() ) : the_post();
@@ -38,8 +39,6 @@
             }
             ?>
 
-
-
             <?php
             // The Query
             $query = new WP_Query(array('post_type' => 'my-product'));
@@ -48,21 +47,21 @@
             while ( $query->have_posts() ) : $query->the_post();// your post content ( title, excerpt, thumb....)
             ?>
 
-
+                <div>
                 <?php
                     if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it.
                         the_post_thumbnail('thumbnail');
                     }
                 ?>
+                </div>
 
-
-                     <?php
-                        the_title();
-                     ?>
-                     INR.
-                     <?php
-                        echo get_post_meta($post->ID, 'my_product_price_value_key', true);
-                     ?>
+                <div>
+                      <?php the_title(); ?>
+                INR.  <?php echo get_post_meta($post->ID, 'my_product_price_value_key', true); ?>
+                Qty   <INPUT id="txtNumber"  onkeypress="return isNumberKey(event)" type="text" name="txtNumber" style="width: 50px;">
+                      <button>Add to cart</button>
+                </div>
+                </br>
 
             <?php
             endwhile;
@@ -75,7 +74,7 @@
         <div class="col-lg-2">
             <?php get_sidebar('right'); ?>
         </div>
-    
+
     </div>
 </div>
 </body>
@@ -102,4 +101,15 @@
             itemsMobile : false
         });
     });
+
+
+    function isNumberKey(evt)
+    {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+
 </script>

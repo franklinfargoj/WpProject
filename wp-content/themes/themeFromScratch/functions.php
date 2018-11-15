@@ -16,7 +16,6 @@ add_action( 'wp_enqueue_scripts', 'bootstrapstarter_enqueue_scripts' );
 
 
 add_theme_support( 'title-tag' );// show the title in tab
-
 add_theme_support( 'post-thumbnails' );
 
 //custom post for corosal
@@ -35,7 +34,6 @@ function create_post_type() {
 add_action( 'init', 'create_post_type' );
 
 function my_custom_sidebar() {
-
     register_sidebar(
         array (
             'name' => ( 'Left Sidebar' ),
@@ -58,7 +56,6 @@ function my_custom_sidebar() {
             'after_title' => '</h3>',
         )
     );
-
 }
 add_action( 'widgets_init', 'my_custom_sidebar' );
 
@@ -102,6 +99,115 @@ add_shortcode('copyright-year', function($atts, $content)
 });
 
 
+// My-Products Custom Post Type
+function product_init() {
+
+    // set up product labels
+    $labels = array(
+        'name' => 'Products',
+        'singular_name' => 'Products',
+        'add_new' => 'Add New Product',
+        'add_new_item' => 'Add New Product',
+        'edit_item' => 'Edit Product',
+        'new_item' => 'New Product',
+        'all_items' => 'All Products',
+        'view_item' => 'View Product',
+        'search_items' => 'Search Products',
+        'not_found' =>  'No Products Found',
+        'not_found_in_trash' => 'No Products found in Trash',
+        'parent_item_colon' => '',
+        'menu_name' => 'Products',
+    );
+
+    // register post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'has_archive' => true,
+        'show_ui' => true,
+        'capability_type' => 'post',
+        'hierarchical' => false,
+        'rewrite' => array('slug' => 'product'),
+        'query_var' => true,
+        'show_in_nav_menus' => true,
+        'menu_icon' => 'dashicons-randomize',
+
+        'supports' => array(
+            'title',
+            'editor',
+            'author',
+            'excerpt',
+            'trackbacks',
+            'custom-fields',
+            'comments',
+            'revisions',
+            'thumbnail',
+            'page-attributes'
+        )
+    );
+    register_post_type( 'my-product', $args );
+
+    // register taxonomy
+    register_taxonomy('product_category', 'product', array('hierarchical' => true, 'label' => 'Category', 'query_var' => true, 'rewrite' => array( 'slug' => 'product-category' )));
+}
+add_action( 'init', 'product_init' );
+
+function my_product_columns($columns){
+    //unset( $columns['author'],$columns['title'] );
+    $newColumns = array();
+    $newColumns['title'] = 'Name';
+    $newColumns['price'] = 'Price';
+    $newColumns['author'] = 'Author';
+    $newColumns['date'] = 'Date';
+    return $newColumns;
+}
+add_filter('manage_my-product_posts_columns','my_product_columns');
+
+
+function my_product_custom_column($column,$post_id){
+    switch ($column){
+        case 'price':
+            echo get_post_meta ( $post_id, 'my_product_price_value_key', true );
+            break;
+    }
+}
+add_action('manage_my-product_posts_custom_column','my_product_custom_column',10,2);
+
+//echo get_the_excerpt();
+function my_product_add_meta_box(){
+    add_meta_box('price','Price','my_product_price_callback','my-product','normal');
+}
+add_action('add_meta_boxes','my_product_add_meta_box');
+
+function my_product_price_callback($post){
+    wp_nonce_field('my_product_save_price','my_product_price_meta_box_nonce');
+    $value = get_post_meta($post->ID,'my_product_price_value_key',true);
+    echo '<label for="my_product_price_field">Product price:</label>';
+    echo '<input type="text" id="my_product_price_field" name="my_product_price_field" value="' . esc_attr($value) .'" size="25">';
+}
+
+function my_product_save_price($post_id){
+
+    if(! isset( $_POST['my_product_price_meta_box_nonce'])){
+        return;
+    }
+
+    if(! wp_verify_nonce( $_POST['my_product_price_meta_box_nonce'],'my_product_save_price')){
+        return;
+    }
+
+    if( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
+        return;
+    }
+
+    if( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
+        return;
+    }
+
+    $my_data = sanitize_text_field($_POST['my_product_price_field']);
+    update_post_meta($post_id,'my_product_price_value_key',$my_data);
+}
+add_action('save_post','my_product_save_price');
 
 ?>
 

@@ -19,9 +19,6 @@
     <?php wp_head(); ?>
 </head>
 
-
-
-
   <nav class="navbar navbar-expand-sm bg-light">
       <div class="navbar-header">
           <?php if(has_custom_logo()) {
@@ -38,10 +35,10 @@
           $args = array(
               'theme_location' => 'primary',
               'container' => 'ul',
-              'menu_class' => 'nav nav-tabs menu ml-auto'
+              'menu_class' => 'nav nav-tabs menu ml-auto',
           );
+          wp_nav_menu($args);
       ?>
-      <?php wp_nav_menu($args); ?>
   </nav>
 
 

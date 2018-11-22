@@ -14,9 +14,42 @@ function bootstrapstarter_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'bootstrapstarter_enqueue_styles' );
 add_action( 'wp_enqueue_scripts', 'bootstrapstarter_enqueue_scripts' );
 
-
 add_theme_support( 'title-tag' );// show the title in tab
 add_theme_support( 'post-thumbnails' );
+
+add_action('init', 'myStartSession', 1);
+function myStartSession() {
+        session_start();
+}
+
+add_action('wp_logout', 'myEndSession');
+add_action('wp_login', 'myEndSession');
+function myEndSession() {
+    session_destroy ();
+}
+
+/*function my_enqueue() {
+    wp_enqueue_script( 'ajax-script', get_template_directory_uri() . '/JS/script.js', array('jquery'));
+    wp_localize_script( 'ajax-script', 'cc_ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+}
+add_action( 'wp_enqueue_scripts', 'my_enqueue' );*/
+
+function my_theme_scripts_function() {
+    wp_enqueue_script( 'myscript', get_template_directory_uri() . '/jsPage.js');
+    wp_localize_script( 'myscript', 'cc_ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+}
+add_action('wp_enqueue_scripts','my_theme_scripts_function');
+
+
+function my_user_cart() {
+        $_SESSION['cart_items'][] = array(
+            'p_id'   => $_POST['product_id'],
+            'p_price' => $_POST['price'],
+            'p_qty' =>  $_POST['quantity']
+        );
+}
+add_action("wp_ajax_abc", "my_user_cart");
+add_action("wp_ajax_nopriv_abc", "my_user_cart");
 
 //custom post for corosal
 function create_post_type() {

@@ -54,14 +54,11 @@ add_action("wp_ajax_nopriv_delete_from_cart", "out_of_cart");
 
 
 function upgrade_cart_qty(){
-    $incr_cart = array( 'p_id'   => $_POST['product_id'],'p_price' => '','p_qty' => $_POST['quantity']);
+    $incr_cart = array( 'p_id'   => $_POST['product_id'],'p_price' => $_POST['price'],'p_qty' => $_POST['quantity']);
     array_push($_SESSION['cart_items'],$incr_cart);
 }
 add_action("wp_ajax_cart_qty_increase","upgrade_cart_qty");
 add_action("wp_ajax_nopriv_cart_qty_increase","upgrade_cart_qty");
-
-
-
 
 
 function downgrade_cart_qty(){
@@ -74,7 +71,6 @@ function downgrade_cart_qty(){
 }
 add_action("wp_ajax_cart_qty_decrease","downgrade_cart_qty");
 add_action("wp_ajax_nopriv_cart_qty_decrease","downgrade_cart_qty");
-
 
 
 //custom post for corosal

@@ -30,14 +30,10 @@ get_header();
                 }
                 array_push($farray, array('p_id'=>$v,'qty'=>$qty));
             }
-
               // echo "<pre>";
               // print_r($mainarry);
               // print_r($uarray);
-
-
             ?>
-
 
             <table class="table">
                 <thead>
@@ -46,6 +42,7 @@ get_header();
                     <th>Image</th>
                     <th>Qty.</th>
                     <th>Price</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
 
@@ -53,22 +50,26 @@ get_header();
                 <?php foreach($farray as $key => $value){    ?>
                 <tr>
                     <td><?php echo get_the_title($value['p_id']); ?></td>
-
                     <td><?php echo get_the_post_thumbnail( $value['p_id'], 'thumbnail'); ?></td>
-
-
-
-
-                    <td><?php echo $value['qty'];?></td>
+                    <td>
+                        <div>
+                            <a id="cart_qty_up" href="javascript:void(0);" class="cart_qty_up" data-value="<?php echo $value['p_id']; ?>">
+                            <button class="btn">+</button>
+                            </a>
+                            <?php echo $value['qty'];?>
+                            <a id="cart_qty_down" href="javascript:void(0);" class="cart_qty_down" data-value="<?php echo $value['p_id']; ?>">
+                            <button class="btn">-</button>
+                            </a>
+                        </div>
+                    </td>
                     <td><?php echo get_post_meta($value['p_id'], 'my_product_price_value_key', true); ?></td>
+                    <td><a id="remove_from_cart" href="javascript:void(0);" class="btn remove_from_cart" data-value="<?php echo $value['p_id']; ?>">
+                        <button>Remove</button>
+                    </a><td>
                 </tr>
                 <?php } ?>
-
                 </tbody>
-
             </table>
-
-
 
         </div>
 

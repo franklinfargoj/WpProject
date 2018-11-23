@@ -56,12 +56,17 @@ jQuery(document).ready(function() {
 
     $('.cart_qty_up').click(function () {
         var product_id = $(this).attr('data-value');
+        var price = $(this).attr('data-value1');
         var quantity = 1;
         jQuery.ajax({
             type : "post",
             datatype :"json",
             url: cc_ajax_object.ajax_url,
-            data : { action : "cart_qty_increase", product_id : product_id,quantity: quantity},
+            data : { action : "cart_qty_increase",
+                     product_id : product_id,
+                     quantity: quantity,
+                     price: price
+                    },
             success: function (response) {
                 location.reload();
             }

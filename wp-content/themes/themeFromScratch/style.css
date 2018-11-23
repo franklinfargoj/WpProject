@@ -5,19 +5,16 @@ Author URI:
 Version:
 */
 
-
 #owl-demo .item img{
     display: block;
     width: 100%;
     height: auto;
 }
 
-
 .site-nav{
     list-style: none;
     float: left;
 }
-
 
 #menu ul{
     list-style: none;
@@ -25,7 +22,6 @@ Version:
 #menu li{
     display: inline;
 }
-
 
 
 #navmenu ul {
@@ -37,8 +33,8 @@ Version:
 
 
 #menu-primary-menu-links li a {
-    padding-left: 10px;
-    padding-right: 12px;
+    padding-left: 15px;
+    padding-right: 35px;
 }
 
 #menu-footer-menu-link li a {

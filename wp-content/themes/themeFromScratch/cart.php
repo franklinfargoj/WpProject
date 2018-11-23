@@ -14,25 +14,29 @@ get_header();
             $product_id = array();
             $sum = 0;
             $farray = array();
-            $mainarry = $_SESSION['cart_items'];
+            $cart_list = $_SESSION['cart_items'];
 
-            foreach ($mainarry as $k => $v){
+            foreach ($cart_list as $k => $v){
                 $product_id[] = $v['p_id'];
             }
 
-            $uarray = array_unique($product_id);
-            foreach ($uarray as $v){
+            $cart_unique_product_id = array_unique($product_id);
+            foreach ($cart_unique_product_id as $v){
+
+
                 $qty=0;
-                foreach ($mainarry as $k1 => $v1){
+                $amount=0;
+                foreach ($cart_list as $k1 => $v1){
                     if($v1['p_id']==$v){
                         $qty +=$v1['p_qty'];
                     }
+                     $amount += $v1['p_price'];
                 }
-                array_push($farray, array('p_id'=>$v,'qty'=>$qty));
+                array_push($farray, array('p_id'=>$v,'qty'=>$qty,'total_amount'=>$amount));
             }
-              // echo "<pre>";
-              // print_r($mainarry);
-              // print_r($uarray);
+               // echo "<pre>";
+               // print_r($mainarry);
+               // print_r($farray);die;
             ?>
 
             <table class="table">
@@ -47,13 +51,13 @@ get_header();
                 </thead>
 
                 <tbody>
-                <?php foreach($farray as $key => $value){    ?>
+                <?php foreach($farray as $key => $value){ ?>
                 <tr>
                     <td><?php echo get_the_title($value['p_id']); ?></td>
                     <td><?php echo get_the_post_thumbnail( $value['p_id'], 'thumbnail'); ?></td>
                     <td>
                         <div>
-                            <a id="cart_qty_up" href="javascript:void(0);" class="cart_qty_up" data-value="<?php echo $value['p_id']; ?>">
+                            <a id="cart_qty_up" href="javascript:void(0);" class="cart_qty_up" data-value="<?php echo $value['p_id'];?>" data-value1="<?php echo get_post_meta($value['p_id'], 'my_product_price_value_key', true);?>">
                             <button class="btn">+</button>
                             </a>
                             <?php echo $value['qty'];?>
@@ -62,14 +66,18 @@ get_header();
                             </a>
                         </div>
                     </td>
-                    <td><?php echo get_post_meta($value['p_id'], 'my_product_price_value_key', true); ?></td>
+                    <td>
+                        <?php  echo get_post_meta($value['p_id'], 'my_product_price_value_key', true) * $value['qty']; ?>
+                    </td>
+
                     <td><a id="remove_from_cart" href="javascript:void(0);" class="btn remove_from_cart" data-value="<?php echo $value['p_id']; ?>">
                         <button>Remove</button>
                     </a><td>
                 </tr>
-                <?php } ?>
+                <?php  } ?>
                 </tbody>
             </table>
+            <div style="margin-left: 610px;"><h3>Total amount</h3><p>Rs.<?php echo $farray[0]['total_amount']; ?></p></div>
 
         </div>
 

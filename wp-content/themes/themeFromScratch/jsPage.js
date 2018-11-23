@@ -41,6 +41,47 @@ jQuery(document).ready(function() {
         return true;
     }
 
+    $('.remove_from_cart').click(function () {
+        var product_id = $(this).attr('data-value');
+        jQuery.ajax({
+            type : "post",
+            dataType : "json",
+            url : cc_ajax_object.ajax_url,
+            data : {action: "delete_from_cart", product_id : product_id },
+            success : function( response ) {
+                location.reload();
+            }
+        })
+    });
+
+    $('.cart_qty_up').click(function () {
+        var product_id = $(this).attr('data-value');
+        var quantity = 1;
+        jQuery.ajax({
+            type : "post",
+            datatype :"json",
+            url: cc_ajax_object.ajax_url,
+            data : { action : "cart_qty_increase", product_id : product_id,quantity: quantity},
+            success: function (response) {
+                location.reload();
+            }
+        })
+
+    });
+
+    $('.cart_qty_down').click(function () {
+        var product_id = $(this).attr('data-value');
+        jQuery.ajax({
+            type: "post",
+            datatype : "json",
+            url: cc_ajax_object.ajax_url,
+            data : { action: "cart_qty_decrease", product_id : product_id},
+            success:function (response) {
+                location.reload();
+            }
+        })
+    });
+
 });
 
 

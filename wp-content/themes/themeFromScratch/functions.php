@@ -42,6 +42,41 @@ function my_user_cart() {
 add_action("wp_ajax_abc", "my_user_cart");
 add_action("wp_ajax_nopriv_abc", "my_user_cart");
 
+function out_of_cart() {
+    foreach ($_SESSION['cart_items'] as $key => $value){
+        if($value['p_id'] == $_POST['product_id']){
+            unset($_SESSION['cart_items'][$key]);
+        }
+    }
+}
+add_action("wp_ajax_delete_from_cart", "out_of_cart");
+add_action("wp_ajax_nopriv_delete_from_cart", "out_of_cart");
+
+
+function upgrade_cart_qty(){
+    $incr_cart = array( 'p_id'   => $_POST['product_id'],'p_price' => '','p_qty' => $_POST['quantity']);
+    array_push($_SESSION['cart_items'],$incr_cart);
+}
+add_action("wp_ajax_cart_qty_increase","upgrade_cart_qty");
+add_action("wp_ajax_nopriv_cart_qty_increase","upgrade_cart_qty");
+
+
+
+
+
+function downgrade_cart_qty(){
+    foreach ($_SESSION['cart_items'] as $key => $value){
+        if($value['p_id'] == $_POST['product_id']){
+            unset($_SESSION['cart_items'][$key]);
+            break;
+        }
+    }
+}
+add_action("wp_ajax_cart_qty_decrease","downgrade_cart_qty");
+add_action("wp_ajax_nopriv_cart_qty_decrease","downgrade_cart_qty");
+
+
+
 //custom post for corosal
 function create_post_type() {
     register_post_type( 'carosal',

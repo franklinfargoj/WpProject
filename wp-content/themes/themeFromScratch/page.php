@@ -1,14 +1,14 @@
 <?php get_header(); ?>
 
 <div id="owl-demo" class="carousel slide" data-ride="carousel" xmlns="http://www.w3.org/1999/html">
-        <?php
+        <?php  if( get_query_var('pagename') == ''){
         $query = new WP_Query( array( 'post_type' => 'carosal', 'paged' => $paged ) );
         if ( $query->have_posts() ) : ?>
             <?php while ( $query->have_posts() ) : $query->the_post(); ?>
                 <div class="item"><img src=<?php echo get_the_post_thumbnail_url() ?> /></div>
             <?php endwhile; wp_reset_postdata(); ?>
         <?php else : ?>
-        <?php endif; ?>
+        <?php endif;} ?>
 </div>
 
 <body>
@@ -54,7 +54,7 @@
                 ?>
                 </div>
 
-<!--                     <div> --><?php //echo $post->ID;?><!-- </div>-->
+<!--              <div> --><?php //echo $post->ID;?><!-- </div>-->
                      <div> <?php the_title(); ?> </div>
                 Rs.  <span id="prod_<?php echo $post->ID; ?>"><?php echo get_post_meta($post->ID, 'my_product_price_value_key', true); ?></span>
                 Qty  <INPUT id="txtNumber<?php echo $post->ID; ?>" onkeypress="return isNumberKey(event)" type="number" min="1" value='1' style="width: 50px;">

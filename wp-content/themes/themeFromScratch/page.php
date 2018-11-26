@@ -54,14 +54,25 @@
                 ?>
                 </div>
 
-<!--              <div> --><?php //echo $post->ID;?><!-- </div>-->
-                     <div> <?php the_title(); ?> </div>
+
+                <div> <?php the_title(); ?>
+                <?php foreach(($_SESSION['cart_items']) as $key=>$val){
+                    if($val['p_id'] == $post->ID){
+                        ?>
+                        <div><span style="color:#FE980F">Added to the cart!</span> </div>
+                        <?php
+                        break;
+                    }
+                }
+                ?>
+                </div>
+
                 Rs.  <span id="prod_<?php echo $post->ID; ?>"><?php echo get_post_meta($post->ID, 'my_product_price_value_key', true); ?></span>
                 Qty  <INPUT id="txtNumber<?php echo $post->ID; ?>" onkeypress="return isNumberKey(event)" type="number" min="1" value='1' style="width: 50px;">
 
                 </br>
-                <a id="add_to_cart" href="javascript:void(0);" class="btn btn-default add-to-cart" data-value="<?php echo $post->ID; ?>">
-                       <button>Add to cart</button>
+                <a href="javascript:void(0);" class="btn add-to-cart" data-value="<?php echo $post->ID; ?>">
+                <button>Add to cart</button>
                 </a>
 
                 <button>Wishlist</button>

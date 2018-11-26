@@ -61,9 +61,14 @@ get_header();
                             <button class="btn">+</button>
                             </a>
                             <?php echo $value['qty'];?>
-                            <a id="cart_qty_down" href="javascript:void(0);" class="cart_qty_down" data-value="<?php echo $value['p_id']; ?>">
-                            <button class="btn">-</button>
-                            </a>
+
+                            <?php if($value['qty'] == 1) { ?>
+                                <a class="btn disabled"><button class="btn">-</button></a>
+                            <?php }else{ ?>
+                                <a class="cart_qty_down btn" href="javascript:void(0);" data-value="<?php echo $value['p_id']; ?>">
+                                <button class="btn">-</button>
+                                </a>
+                            <?php } ?>
                         </div>
                     </td>
                     <td>
@@ -77,7 +82,10 @@ get_header();
                 <?php  } ?>
                 </tbody>
             </table>
-            <div style="margin-left: 610px;"><h3>Total amount</h3><p>Rs.<?php echo $farray[0]['total_amount']; ?></p></div>
+            <div style="margin-left: 490px;">
+                <dt>Total  Rs.<?php echo $farray[0]['total_amount']; ?></dt>
+                <button type="button" class="btn btn-primary">Place order</button>
+            </div>
 
         </div>
 

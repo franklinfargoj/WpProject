@@ -28,7 +28,7 @@ add_action('wp_login', 'myEndSession');
 
 function my_theme_scripts_function() {
     wp_enqueue_script( 'myscript', get_template_directory_uri() . '/jsPage.js');
-    wp_localize_script( 'myscript', 'cc_ajax_object',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+    wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action('wp_enqueue_scripts','my_theme_scripts_function');
 
@@ -39,8 +39,8 @@ function my_user_cart() {
             'p_qty' =>  $_POST['quantity']
         );
 }
-add_action("wp_ajax_abc", "my_user_cart");
-add_action("wp_ajax_nopriv_abc", "my_user_cart");
+add_action("wp_ajax_add_to_cart", "my_user_cart");
+add_action("wp_ajax_nopriv_add_to_cart", "my_user_cart");
 
 function out_of_cart() {
     foreach ($_SESSION['cart_items'] as $key => $value){

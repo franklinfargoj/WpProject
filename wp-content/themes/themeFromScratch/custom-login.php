@@ -1,53 +1,25 @@
 <?php
 /*Template name: Custom Login page*/
-global $user_ID;
-
-if($user_ID){
-
-    if($_POST){
-
-        $username = $wpdb->prepare($_POST['username']);
-        $password = $wpdb->prepare($_POST['password']);
-
-        $login_array = array();
-        $login_array['user_login'] = $username;
-        $login_array['user_password'] = $password;
-
-        $verify_user = wp_signon($login_array,true);
-
-        if(!is_wp_error($verify_user)){
-            echo "<script>window.location=' ".site_url()."'</script>";
-        }else{
-            echo "<p>Invalid credentials</p>";
-            die();
-        }
-
-    }
-
-    get_header();
+get_header();
 ?>
 
-    <form method="post">
+    <form method="post" id="loginFormoId">
         <p>
             <label for="username">Username/Email</label>
-            <input type="text" id="username" name="username">
+            <input type="text" id="custom_username" class="custom_username" name="custom_username">
         </p>
 
         <p>
             <label for="password">Password</label>
-            <input type="password" id="password" name="password">
+            <input type="password" id="custom_password" name="custom_password" class="custom_password">
         </p>
+<!--        <p>-->
+<!--            <button type="submit" name="btn_submit">Log In</button>-->
+<!--        </p>-->
+        <div>
+            <input type="submit" id="submitButton"  name="submitButton">
+        </div>
 
-        <p>
-            <button type="submit" name="btn_submit">Log In</button>
-        </p>
     </form>
 
-<?php
-
-    get_footer();
-    }else{
-
-    }
-
-?>
+<?php get_footer();?>

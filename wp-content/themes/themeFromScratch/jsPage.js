@@ -27,7 +27,30 @@ jQuery(document).ready(function() {
             url : ajax_params.ajax_url,
             data : {action: "add_to_cart", product_id : product_id, price: price,quantity: quantity },
             success : function( response ) {
-               //  $(".add_cart_"+product_id).text('abcd');
+                $('.add_cart_'+response.p_id).html('<span style="color:#FE980F">' + "Added to the cart!" + '</span>');
+            }
+        })
+    });
+
+    $('.cart_qty_up').click(function () {
+        var product_id = $(this).attr('data-value');
+        var price = $(this).attr('data-value1');
+        var quantity = 1;
+
+        jQuery.ajax({
+            type : "post",
+            datatype :"json",
+            url: ajax_params.ajax_url,
+            data : { action : "cart_qty_increase",
+                product_id : product_id,
+                quantity: quantity,
+                price: price
+            },
+            success: function (response) {
+                var x = JSON.parse(response);
+                $(".cart_qty_"+x.p_id).html(x.p_qty);
+                $(".per_product_price"+x.p_id).html(x.p_price*x.p_qty);
+
             }
         })
     });
@@ -54,26 +77,6 @@ jQuery(document).ready(function() {
         })
     });
 
-    $('.cart_qty_up').click(function () {
-        var product_id = $(this).attr('data-value');
-        var price = $(this).attr('data-value1');
-        var quantity = 1;
-        jQuery.ajax({
-            type : "post",
-            datatype :"json",
-            url: ajax_params.ajax_url,
-            data : { action : "cart_qty_increase",
-                     product_id : product_id,
-                     quantity: quantity,
-                     price: price
-                    },
-            success: function (response) {
-                console.log(response);
-                //console.log(sessionStorage.getItem('cart_items'));
-                // location.reload();
-            }
-        })
-    });
 
     $('.cart_qty_down').click(function () {
         var product_id = $(this).attr('data-value');
@@ -83,7 +86,19 @@ jQuery(document).ready(function() {
             url: ajax_params.ajax_url,
             data : { action: "cart_qty_decrease", product_id : product_id},
             success:function (response) {
-               // location.reload();
+                var x = JSON.parse(response);
+
+                if (x.p_qty >= 1) {
+                    $(".per_product_price"+x.p_id).html(x.p_price*x.p_qty);
+                } else {
+                    $(".per_product_price"+x.p_id).html(x.p_price);
+                }
+
+
+                 $(".cart_qty_"+x.p_id).html(x.p_qty);
+
+
+
             }
         })
     });

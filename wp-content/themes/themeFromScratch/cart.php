@@ -11,21 +11,24 @@ get_header();
         <div class="col-lg-8">
             <h2> Cart Items</h2>
             <?php
+            global $current_user;
+            $current_user->display_name;
             $product_id = array();
             $sum = 0;
             $farray = array();
             $cart_list = $_SESSION['cart_items'];
 
+            if(!empty($cart_list)){
             foreach ($cart_list as $k => $v){
                 $product_id[] = $v['p_id'];
+            }
             }
 
             $cart_unique_product_id = array_unique($product_id);
             foreach ($cart_unique_product_id as $v){
 
-
-                $qty=0;
-                $amount=0;
+                $qty = 0;
+                $amount = 0;
                 foreach ($cart_list as $k1 => $v1){
                     if($v1['p_id']==$v){
                         $qty +=$v1['p_qty'];
@@ -36,6 +39,8 @@ get_header();
             }
                // echo "<pre>";
                // print_r($mainarry);
+
+             $_SESSION['checkout'] =  $farray;
                // print_r($farray);die;
             ?>
 
@@ -51,8 +56,11 @@ get_header();
                 </thead>
 
                 <tbody>
-                <?php foreach($farray as $key => $value){ ?>
-                <tr>
+                <?php
+
+                if(!empty($farray))
+                foreach($farray as $key => $value){ ?>
+                <tr class="cart_list_<?php echo $value['p_id'];?>">
                     <td><?php echo get_the_title($value['p_id']); ?></td>
                     <td><?php echo get_the_post_thumbnail( $value['p_id'], 'thumbnail'); ?></td>
                     <td>
@@ -75,17 +83,27 @@ get_header();
                         <?php  echo get_post_meta($value['p_id'], 'my_product_price_value_key', true) * $value['qty']; ?>
                     </td>
 
-                    <td><a id="remove_from_cart" href="javascript:void(0);" class="btn remove_from_cart" data-value="<?php echo $value['p_id']; ?>">
+                    <td><a href="javascript:void(0);" class="btn remove_from_cart" data-value="<?php echo $value['p_id']; ?>">
                         <button>Remove</button>
                     </a><td>
                 </tr>
-                <?php  } ?>
+                <?php  }
+
+
+
+                ?>
                 </tbody>
             </table>
+
+            <?php if(!empty($_SESSION['cart_items'])){ ?>
             <div style="margin-left: 490px;">
                 <dt>Total  Rs.<?php echo $farray[0]['total_amount']; ?></dt>
-                <button type="button" class="btn btn-primary">Place order</button>
+
+                <button id="checkout" class="btn btn-primary">Place order</button>
+
+
             </div>
+            <?php }  ?>
 
         </div>
 

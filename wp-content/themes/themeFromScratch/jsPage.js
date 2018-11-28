@@ -27,10 +27,9 @@ jQuery(document).ready(function() {
             url : ajax_params.ajax_url,
             data : {action: "add_to_cart", product_id : product_id, price: price,quantity: quantity },
             success : function( response ) {
-                location.reload();
+               //  $(".add_cart_"+product_id).text('abcd');
             }
         })
-
     });
 
     function isNumberKey(evt) {
@@ -49,7 +48,8 @@ jQuery(document).ready(function() {
             url : ajax_params.ajax_url,
             data : {action: "delete_from_cart", product_id : product_id },
             success : function( response ) {
-                location.reload();
+                $(".cart_list_"+product_id).fadeOut();
+                console.log(response);
             }
         })
     });
@@ -68,7 +68,9 @@ jQuery(document).ready(function() {
                      price: price
                     },
             success: function (response) {
-                 location.reload();
+                console.log(response);
+                //console.log(sessionStorage.getItem('cart_items'));
+                // location.reload();
             }
         })
     });
@@ -81,10 +83,39 @@ jQuery(document).ready(function() {
             url: ajax_params.ajax_url,
             data : { action: "cart_qty_decrease", product_id : product_id},
             success:function (response) {
-                location.reload();
+               // location.reload();
             }
         })
     });
+
+    $('#checkout').click(function () {
+        window.location='./checkout/'
+    });
+
+    $('#login').click(function () {
+        window.location='./login/'
+    });
+
+    $('#loginFormoId').submit(function() {
+        var username = $( ".custom_username" ).val();
+        var password = $( ".custom_password" ).val();
+        //alert(ajax_params.ajax_url);
+        jQuery.ajax({
+            type: "POST",
+            datatype : "json",
+            url: ajax_params.ajax_url,
+            data : { action: "userlogin", username : username, password : password},
+            success: function(response) {
+               if(response = "success"){
+                   window.location='./checkout/'
+               }else{
+                   window.location='./login/'
+               }
+            }
+        })
+        return false;
+    });
+
 
 });
 

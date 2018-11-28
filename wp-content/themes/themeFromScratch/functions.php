@@ -1,5 +1,6 @@
 <?php
 
+//Load bootstrap css and js
 function bootstrapstarter_enqueue_styles() {
     wp_register_style('bootstrap', get_template_directory_uri() . '/bootstrap/css/bootstrap.min.css' );
     $dependencies = array('bootstrap');
@@ -12,55 +13,59 @@ function bootstrapstarter_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'bootstrapstarter_enqueue_styles' );
 add_action( 'wp_enqueue_scripts', 'bootstrapstarter_enqueue_scripts' );
 
-add_theme_support( 'title-tag' );// show the title in tab
+// show the title in tab
+add_theme_support( 'title-tag' );
+
+//show featured image
 add_theme_support( 'post-thumbnails' );
 
+//access to the session
 function myStartSession() {
-        session_start();
+    session_start();
 }
 add_action('init', 'myStartSession', 1);
 
-function myEndSession() {
-    session_destroy ();
+/*function myEndSession() {
+     session_destroy ();
 }
 add_action('wp_logout', 'myEndSession');
-add_action('wp_login', 'myEndSession');
+add_action('wp_login', 'myEndSession');*/
 
+//includes javascript page and Ajax used in JS.
 function my_theme_scripts_function() {
     wp_enqueue_script( 'myscript', get_template_directory_uri() . '/jsPage.js');
     wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action('wp_enqueue_scripts','my_theme_scripts_function');
 
+//Set session for products added to cart
 function my_user_cart() {
         $_SESSION['cart_items'][] = array(
             'p_id'   => $_POST['product_id'],
             'p_price' => $_POST['price'],
             'p_qty' =>  $_POST['quantity']
         );
+    $message = 'Added to the cart!';
+    echo json_encode($message);
+    die;
 }
 add_action("wp_ajax_add_to_cart", "my_user_cart");
 add_action("wp_ajax_nopriv_add_to_cart", "my_user_cart");
 
+//Remove array out of the cart session (fadeout in jquery)
 function out_of_cart() {
     foreach ($_SESSION['cart_items'] as $key => $value){
         if($value['p_id'] == $_POST['product_id']){
             unset($_SESSION['cart_items'][$key]);
         }
     }
+    echo json_encode($_SESSION['cart_items']);
+    die;
 }
 add_action("wp_ajax_delete_from_cart", "out_of_cart");
 add_action("wp_ajax_nopriv_delete_from_cart", "out_of_cart");
 
-
-function upgrade_cart_qty(){
-    $incr_cart = array( 'p_id'   => $_POST['product_id'],'p_price' => $_POST['price'],'p_qty' => $_POST['quantity']);
-    array_push($_SESSION['cart_items'],$incr_cart);
-}
-add_action("wp_ajax_cart_qty_increase","upgrade_cart_qty");
-add_action("wp_ajax_nopriv_cart_qty_increase","upgrade_cart_qty");
-
-
+//Reduce array by prouct id from cart session
 function downgrade_cart_qty(){
     foreach ($_SESSION['cart_items'] as $key => $value){
         if($value['p_id'] == $_POST['product_id']){
@@ -68,10 +73,49 @@ function downgrade_cart_qty(){
             break;
         }
     }
+    echo json_encode($_SESSION['cart_items'][$key]);
+    die;
 }
 add_action("wp_ajax_cart_qty_decrease","downgrade_cart_qty");
 add_action("wp_ajax_nopriv_cart_qty_decrease","downgrade_cart_qty");
 
+//insert array in cart session
+function upgrade_cart_qty(){
+    $incr_cart = array( 'p_id'   => $_POST['product_id'],'p_price' => $_POST['price'],'p_qty' => $_POST['quantity']);
+    array_push($_SESSION['cart_items'],$incr_cart);
+   // echo json_encode($_SESSION['cart_items']);
+    die;
+}
+add_action("wp_ajax_cart_qty_increase","upgrade_cart_qty");
+add_action("wp_ajax_nopriv_cart_qty_increase","upgrade_cart_qty");
+
+//checks if user exist exist and redirects to checkout else returns the login page
+function userlogin(){
+    if($_POST){
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        $login_array = array();
+        $login_array['user_login'] = $username;
+        $login_array['user_password'] = $password;
+        $verify_user = wp_signon($login_array,true);
+
+        if(!is_wp_error($verify_user)){
+            echo json_encode('success');
+        }else{
+            echo json_encode('fail');
+        }
+        die;
+    }
+}
+add_action("wp_ajax_userlogin","userlogin");
+add_action("wp_ajax_nopriv_userlogin","userlogin");
+
+
+//function admin_default_page() {
+//    return 'https://careers.slb.com/';
+//}
+//add_filter('login_redirect', 'admin_default_page');
 
 //custom post for corosal
 function create_post_type() {
@@ -88,6 +132,7 @@ function create_post_type() {
 }
 add_action( 'init', 'create_post_type' );
 
+//left and right side bar in the theme
 function my_custom_sidebar() {
     register_sidebar(
         array (
@@ -207,6 +252,7 @@ function product_init() {
 }
 add_action( 'init', 'product_init' );
 
+//back end product details for the custom post
 function my_product_columns($columns){
     //unset( $columns['author'],$columns['title'] );
     $newColumns = array();
@@ -218,6 +264,7 @@ function my_product_columns($columns){
 }
 add_filter('manage_my-product_posts_columns','my_product_columns');
 
+//add price column in listing of custom post Products
 function my_product_custom_column($column,$post_id){
     switch ($column){
         case 'price':
@@ -240,6 +287,7 @@ function my_product_price_callback($post){
     echo '<input type="text" id="my_product_price_field" name="my_product_price_field" value="' . esc_attr($value) .'" size="25">';
 }
 
+//saves the product price of custom post products in db.
 function my_product_save_price($post_id){
 
     if(! isset( $_POST['my_product_price_meta_box_nonce'])){

@@ -60,7 +60,6 @@ get_header();
 
                 <tbody>
                 <?php
-
                 if(!empty($_SESSION['cart_items']))
                 foreach($_SESSION['cart_items'] as $key => $value){ ?>
                 <tr class="cart_list_<?php echo $value['p_id'];?>">
@@ -78,14 +77,12 @@ get_header();
 
 
                             <?php if($value['p_qty'] == 1) { ?>
-                                <a class="btn disabled"><button class="btn">-</button></a>
+                                <a><button class="btn">-</button></a>
                             <?php }else{ ?>
                                 <a class="cart_qty_down btn" href="javascript:void(0);" data-value="<?php echo $value['p_id']; ?>">
                                 <button class="btn">-</button>
                                 </a>
                             <?php } ?>
-
-
                         </div>
                     </td>
                     <td>
@@ -98,31 +95,30 @@ get_header();
                         <button>Remove</button>
                     </a><td>
                 </tr>
-                <?php  }
-
-
-
-                ?>
+                <?php  }  ?>
                 </tbody>
             </table>
 
-            <?php if(!empty($_SESSION['cart_items'])){ ?>
 
-                <div style="margin-left: 490px;">
-
-                <?php
-                $total_amt =0;
-                foreach ($_SESSION['cart_items'] as $key => $value){
-                    $total_amt+=$value['p_price']*$value['p_qty'];
-                }
-                ?>
-
-                <dt>Total  Rs.<?php echo $total_amt; ?></dt>
-
-                <button id="checkout" class="btn btn-primary">Place order</button>
-
+            <div style="margin-left: 490px;">
+            <dt>Total  Rs.
+                <span  id="final_amount" class="final_amount">
+                                                            <?php
+                                                            if (!empty($_SESSION['cart_items'])) {
+                                                                $total = 0;
+                                                                foreach ($_SESSION['cart_items'] as $k=>$v){
+                                                                   $total+= $v['p_price']*$v['p_qty'];
+                                                                }
+                                                                echo $total;
+                                                            } else {
+                                                                echo '0';
+                                                            } ?>
+                </span>
+            </dt>
+            <button id="checkout" class="btn btn-primary">Place order</button>
             </div>
-            <?php }  ?>
+
+
 
         </div>
 

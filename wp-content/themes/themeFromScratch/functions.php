@@ -61,7 +61,20 @@ function my_user_cart() {
         );
     }
     $result = 1;
-    echo json_encode($_SESSION['cart_items'][$_POST['product_id']]);
+
+    $total = 0;
+    foreach ($_SESSION['cart_items'] as $key=>$value){
+        $total+= $value['p_price']* $value['p_qty'];
+    }
+
+
+    $cart_price = array(
+        'product' =>   $_SESSION['cart_items'][$_POST['product_id']],
+        'total' => $total
+    );
+
+   // echo json_encode($_SESSION['cart_items'][$_POST['product_id']]);
+    echo json_encode($cart_price);
     die;
 }
 add_action("wp_ajax_add_to_cart", "my_user_cart");
@@ -73,15 +86,23 @@ add_action("wp_ajax_nopriv_cart_qty_increase","my_user_cart");
 //Reduce array by prouct id from cart session
 function downgrade_cart_qty(){
 
+   // print_r($_SESSION['cart_items'][$_POST['product_id']]['p_qty']);die;
     if($_SESSION['cart_items'][$_POST['product_id']]['p_qty'] > 1){
-
         if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
             $_SESSION['cart_items'][$_POST['product_id']]['p_qty']-=1;
         }
-
     }
 
-    echo json_encode($_SESSION['cart_items'][$_POST['product_id']]);
+    $total = 0;
+    foreach ($_SESSION['cart_items'] as $key=>$value){
+        $total+= $value['p_price']* $value['p_qty'];
+    }
+
+    $cart_price = array(
+        'sub_total' => $_SESSION['cart_items'][$_POST['product_id']],
+        'total' => $total
+    );
+    echo json_encode($cart_price);
     die;
 }
 add_action("wp_ajax_cart_qty_decrease","downgrade_cart_qty");
@@ -94,7 +115,18 @@ function out_of_cart() {
             unset($_SESSION['cart_items'][$key]);
         }
     }
-    echo json_encode($_SESSION['cart_items']);
+
+    $total = 0;
+    foreach ($_SESSION['cart_items'] as $key=>$value){
+        $total+= $value['p_price']* $value['p_qty'];
+    }
+
+    $cart_price = array(
+         'product_id' => $_SESSION['cart_items'],
+         'total' => $total
+    );
+
+    echo json_encode($cart_price);
     die;
 }
 add_action("wp_ajax_delete_from_cart", "out_of_cart");

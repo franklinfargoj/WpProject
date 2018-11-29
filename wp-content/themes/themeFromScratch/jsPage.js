@@ -73,9 +73,12 @@ jQuery(document).ready(function() {
             url : ajax_params.ajax_url,
             data : {action: "delete_from_cart", product_id : product_id },
             success : function( response ) {
-                console.log(response);
+                console.log(response.total);
                 $(".cart_list_"+product_id).fadeOut();
                 $("#final_amount").html(response.total);
+                if(response.total == 0){
+                $("#checkout").fadeOut();
+                }
             }
         })
     });
@@ -91,14 +94,10 @@ jQuery(document).ready(function() {
             success:function (response) {
                 var x = JSON.parse(response);
                 console.log(x.total);
-
-                if (x.p_qty >= 1) {
-                    $(".per_product_price"+x.sub_total.p_id).html(x.sub_total.p_price*x.sub_total.p_qty);
-                } else {
-                    $(".per_product_price"+x.sub_total.p_id).html(x.sub_total.p_price);
-                }
-                $(".cart_qty_"+product_id).html(x.sub_total.p_qty);
-                $("#final_amount").html(x.total);
+                var p_price = x.sub_total.p_price*x.sub_total.p_qty;
+                $("#per_product_price"+product_id).html(p_price);
+                $(".cart_qty_"+product_id).html(x.sub_total.p_qty); //correct
+                $("#final_amount").html(x.total); //correct
             }
         })
     });

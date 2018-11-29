@@ -86,6 +86,8 @@ add_action("wp_ajax_nopriv_cart_qty_increase","my_user_cart");
 //Reduce array by prouct id from cart session
 function downgrade_cart_qty(){
 
+
+
    // print_r($_SESSION['cart_items'][$_POST['product_id']]['p_qty']);die;
     if($_SESSION['cart_items'][$_POST['product_id']]['p_qty'] > 1){
         if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
@@ -94,14 +96,18 @@ function downgrade_cart_qty(){
     }
 
     $total = 0;
+    $p_price =0;
     foreach ($_SESSION['cart_items'] as $key=>$value){
         $total+= $value['p_price']* $value['p_qty'];
+        $p_price = $value['p_price']* $value['p_qty'];
     }
 
     $cart_price = array(
         'sub_total' => $_SESSION['cart_items'][$_POST['product_id']],
         'total' => $total
     );
+
+
     echo json_encode($cart_price);
     die;
 }

@@ -76,17 +76,15 @@ get_header();
                             </span>
 
 
-                            <?php if($value['p_qty'] == 1) { ?>
-                                <a><button class="btn">-</button></a>
-                            <?php }else{ ?>
+
                                 <a class="cart_qty_down btn" href="javascript:void(0);" data-value="<?php echo $value['p_id']; ?>">
                                 <button class="btn">-</button>
                                 </a>
-                            <?php } ?>
+
                         </div>
                     </td>
                     <td>
-                        <span class="per_product_price<?php echo $value['p_id'];?>">
+                        <span id="per_product_price<?php echo $value['p_id'];?>" class="per_product_price<?php echo $value['p_id'];?>">
                         <?php  echo get_post_meta($value['p_id'], 'my_product_price_value_key', true) * $value['p_qty']; ?>
                         </span>
                     </td>
@@ -101,7 +99,10 @@ get_header();
 
 
             <div style="margin-left: 490px;">
-            <dt>Total  Rs.
+            <dt>
+                <?php    if (!empty($_SESSION['cart_items'])) {   ?>
+                Total  Rs.
+                <?php } ?>
                 <span  id="final_amount" class="final_amount">
                                                             <?php
                                                             if (!empty($_SESSION['cart_items'])) {
@@ -111,11 +112,13 @@ get_header();
                                                                 }
                                                                 echo $total;
                                                             } else {
-                                                                echo '0';
+                                                                echo '';
                                                             } ?>
                 </span>
             </dt>
-            <button id="checkout" class="btn btn-primary">Place order</button>
+                <?php    if (!empty($_SESSION['cart_items'])) {   ?>
+                <button id="checkout" class="btn btn-primary">Place order</button>
+                <?php } ?>
             </div>
 
 

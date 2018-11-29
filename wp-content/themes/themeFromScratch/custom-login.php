@@ -1,8 +1,11 @@
 <?php
 /*Template name: Custom Login page*/
+if(!is_user_logged_in()){
 get_header();
+}
 ?>
 
+<?php if(!is_user_logged_in()){ ?>
     <form method="post" id="loginFormoId">
         <p>
             <label for="username">Username/Email</label>
@@ -21,5 +24,9 @@ get_header();
         </div>
 
     </form>
+<?php }else{
+    $url = get_home_url();
+    wp_redirect($url);
+}?>
 
 <?php get_footer();?>

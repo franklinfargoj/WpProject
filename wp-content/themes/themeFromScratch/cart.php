@@ -10,43 +10,6 @@ get_header();
 
         <div class="col-lg-8">
             <h2> Cart Items</h2>
-            <?php
-            global $current_user;
-            $current_user->display_name;
-            $product_id = array();
-            $sum = 0;
-            $farray = array();
-       //     $cart_list = $_SESSION['cart_items'];
-
-//            echo '<pre>';
-//            print_r($_SESSION);
-//            echo '</pre>';
-//            die;
-
-//            if(!empty($cart_list)){
-//            foreach ($cart_list as $k => $v){
-//                $product_id[] = $v['p_id'];
-//            }
-//            }
-//
-//            $cart_unique_product_id = array_unique($product_id);
-//            foreach ($cart_unique_product_id as $v){
-//                $qty = 0;
-//                $amount = 0;
-//                foreach ($cart_list as $k1 => $v1){
-//                    if($v1['p_id']==$v){
-//                        $qty +=$v1['p_qty'];
-//                    }
-//                }
-//
-//                array_push($farray, array('p_id'=>$v,'qty'=>$qty));
-//            }
-//               // echo "<pre>";
-               // print_r($mainarry);
-               //$_SESSION['checkout'] =  $farray;
-                //print_r($farray);die;
-            ?>
-
             <table class="table">
                 <thead>
                 <tr>
@@ -75,12 +38,9 @@ get_header();
                             <?php echo $value['p_qty'];?>
                             </span>
 
-
-
-                                <a class="cart_qty_down btn" href="javascript:void(0);" data-value="<?php echo $value['p_id']; ?>">
-                                <button class="btn">-</button>
-                                </a>
-
+                            <a class="cart_qty_down btn" href="javascript:void(0);" data-value="<?php echo $value['p_id']; ?>">
+                            <button class="btn">-</button>
+                            </a>
                         </div>
                     </td>
                     <td>
@@ -90,13 +50,12 @@ get_header();
                     </td>
 
                     <td><a href="javascript:void(0);" class="btn remove_from_cart" data-value="<?php echo $value['p_id']; ?>">
-                        <button>Remove</button>
-                    </a><td>
+                        <button>Remove</button></a>
+                    <td>
                 </tr>
                 <?php  }  ?>
                 </tbody>
             </table>
-
 
             <div style="margin-left: 490px;">
             <dt>
@@ -104,24 +63,22 @@ get_header();
                 Total  Rs.
                 <?php } ?>
                 <span  id="final_amount" class="final_amount">
-                                                            <?php
-                                                            if (!empty($_SESSION['cart_items'])) {
-                                                                $total = 0;
-                                                                foreach ($_SESSION['cart_items'] as $k=>$v){
-                                                                   $total+= $v['p_price']*$v['p_qty'];
-                                                                }
-                                                                echo $total;
-                                                            } else {
-                                                                echo '';
-                                                            } ?>
+                             <?php
+                             if (!empty($_SESSION['cart_items'])) {
+                             $total = 0;
+                             foreach ($_SESSION['cart_items'] as $k=>$v){
+                                  $total+= $v['p_price']*$v['p_qty'];
+                             }
+                             echo $total;
+                             } else {
+                                echo '';
+                             } ?>
                 </span>
             </dt>
                 <?php    if (!empty($_SESSION['cart_items'])) {   ?>
                 <button id="checkout" class="btn btn-primary">Place order</button>
                 <?php } ?>
             </div>
-
-
 
         </div>
 

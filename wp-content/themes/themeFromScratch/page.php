@@ -59,7 +59,7 @@
                 the_title();
                 ?>
                     <div>
-                <span  class="add_cart_<?php echo $post->ID;?>" style="color:#FE980F"></span>
+                     <span  class="add_cart_<?php echo $post->ID;?>" style="color:#FE980F"></span>
                     </div>
                 </div>
 

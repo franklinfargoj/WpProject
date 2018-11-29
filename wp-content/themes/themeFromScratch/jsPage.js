@@ -96,8 +96,8 @@ jQuery(document).ready(function() {
                 console.log(x.total);
                 var p_price = x.sub_total.p_price*x.sub_total.p_qty;
                 $("#per_product_price"+product_id).html(p_price);
-                $(".cart_qty_"+product_id).html(x.sub_total.p_qty); //correct
-                $("#final_amount").html(x.total); //correct
+                $(".cart_qty_"+product_id).html(x.sub_total.p_qty);
+                $("#final_amount").html(x.total);
             }
         })
     });

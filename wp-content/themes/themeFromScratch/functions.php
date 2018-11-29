@@ -85,9 +85,6 @@ add_action("wp_ajax_nopriv_cart_qty_increase","my_user_cart");
 
 //Reduce array by prouct id from cart session
 function downgrade_cart_qty(){
-
-
-
    // print_r($_SESSION['cart_items'][$_POST['product_id']]['p_qty']);die;
     if($_SESSION['cart_items'][$_POST['product_id']]['p_qty'] > 1){
         if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
@@ -360,7 +357,43 @@ function my_product_save_price($post_id){
 }
 add_action('save_post','my_product_save_price');
 
+
+add_filter( 'wp_get_nav_menu_items', 'custom_nav_menu_items', 20, 2 );
+function custom_nav_menu_items( $items, $menu ){
+
+    $quantity = 0;
+    if(!empty($_SESSION['cart_items'])){
+        foreach ($_SESSION['cart_items'] as $k => $v) {
+            $quantity+= $v['p_qty'];
+        }
+    }
+
+    // only add profile link if user is logged in
+    if ( get_current_user_id() ){
+        $items[] = _custom_nav_menu_item( 'Cart('.$quantity.')', get_author_posts_url( get_current_user_id() ), 4 );
+    }
+    return $items;
+}
+
+function _custom_nav_menu_item( $title, $url, $order=0, $parent = 0 ){
+    $item = new stdClass();
+
+    $item->title = $title;
+    $item->url = get_home_url().'/cart/';
+    $item->ID = 1000000 + $order + $parent;
+    $item->db_id = $item->ID;
+    $item->menu_order = $order;
+    $item->menu_item_parent = $item->ID;
+    $item->type = '';
+    $item->object = '';
+    $item->object_id = '';
+    $item->classes = array();
+    $item->target = '';
+    $item->attr_title = '';
+    $item->description = '';
+    $item->xfn = '';
+    $item->status = '';
+    return $item;
+}
+
 ?>
-
-
-

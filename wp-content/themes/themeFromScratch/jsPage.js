@@ -35,6 +35,8 @@ jQuery(document).ready(function() {
             url : ajax_params.ajax_url,
             data : {action: "add_to_cart", product_id : product_id, price: price,quantity: quantity },
             success : function( response ) {
+                console.log(response);
+                $(".header_cart").html(response.qty_cart);
                 $('.add_cart_'+response.product.p_id).html('<span style="color:#FE980F">' + "Added to the cart!" + '</span>');
             }
         })
@@ -73,9 +75,15 @@ jQuery(document).ready(function() {
             url : ajax_params.ajax_url,
             data : {action: "delete_from_cart", product_id : product_id },
             success : function( response ) {
-                console.log(response.total);
+                //console.log(response.qty);
+
+
+
                 $(".cart_list_"+product_id).fadeOut();
                 $("#final_amount").html(response.total);
+
+                $(".header_cart").html(response.cart);
+
                 if(response.total == 0){
                 $("#checkout").fadeOut();
                 }
@@ -109,6 +117,12 @@ jQuery(document).ready(function() {
     $('#login').click(function () {
         window.location='./login/'
     });
+
+    $('#confirmation').click(function () {
+        window.location='./confirmation/'
+    });
+
+
 
     $('#loginFormoId').submit(function() {
         var username = $( ".custom_username" ).val();

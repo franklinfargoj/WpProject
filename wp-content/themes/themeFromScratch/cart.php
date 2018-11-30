@@ -76,7 +76,7 @@ get_header();
                 </span>
             </dt>
                 <?php    if (!empty($_SESSION['cart_items'])) {   ?>
-                <button id="checkout" class="btn btn-primary">Place order</button>
+                <button id="checkout" class="btn btn-primary">Proceed to checkout</button>
                 <?php } ?>
             </div>
 

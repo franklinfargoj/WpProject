@@ -60,17 +60,18 @@ function my_user_cart() {
             'p_qty' =>  $_POST['quantity']
         );
     }
-    $result = 1;
-
+    $qty_cart = 0;
     $total = 0;
     foreach ($_SESSION['cart_items'] as $key=>$value){
         $total+= $value['p_price']* $value['p_qty'];
+        $qty_cart+=$value['p_qty'];
     }
 
 
     $cart_price = array(
         'product' =>   $_SESSION['cart_items'][$_POST['product_id']],
-        'total' => $total
+        'total' => $total,
+        'qty_cart'=>$qty_cart
     );
 
    // echo json_encode($_SESSION['cart_items'][$_POST['product_id']]);
@@ -118,15 +119,17 @@ function out_of_cart() {
             unset($_SESSION['cart_items'][$key]);
         }
     }
-
+    $qty=0;
     $total = 0;
     foreach ($_SESSION['cart_items'] as $key=>$value){
         $total+= $value['p_price']* $value['p_qty'];
+        $qty+=$value['p_qty'];
     }
 
     $cart_price = array(
          'product_id' => $_SESSION['cart_items'],
-         'total' => $total
+         'total' => $total,
+         'qty' => $qty
     );
 
     echo json_encode($cart_price);
@@ -357,42 +360,39 @@ function my_product_save_price($post_id){
 }
 add_action('save_post','my_product_save_price');
 
-
+//Added cart in nav menu externally
 add_filter( 'wp_get_nav_menu_items', 'custom_nav_menu_items', 20, 2 );
 function custom_nav_menu_items( $items, $menu ){
-
     $quantity = 0;
     if(!empty($_SESSION['cart_items'])){
         foreach ($_SESSION['cart_items'] as $k => $v) {
             $quantity+= $v['p_qty'];
         }
     }
+    $xx= "<span class='header_cart' style='color:black'>".$quantity."</span>";
+    $msg = "Cart(".$xx.")";
 
-    // only add profile link if user is logged in
-    if ( get_current_user_id() ){
-        $items[] = _custom_nav_menu_item( 'Cart('.$quantity.')', get_author_posts_url( get_current_user_id() ), 4 );
-    }
+    $items[] = _custom_nav_menu_item($msg, get_home_url().'/cart/', 4 );
     return $items;
 }
 
-function _custom_nav_menu_item( $title, $url, $order=0, $parent = 0 ){
+function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
     $item = new stdClass();
-
     $item->title = $title;
-    $item->url = get_home_url().'/cart/';
-    $item->ID = 1000000 + $order + $parent;
+    $item->url = $url;
+    $item->ID = $parent;
     $item->db_id = $item->ID;
     $item->menu_order = $order;
     $item->menu_item_parent = $item->ID;
     $item->type = '';
-    $item->object = '';
+    $item->object = 'Primary menu';
     $item->object_id = '';
     $item->classes = array();
-    $item->target = '';
-    $item->attr_title = '';
-    $item->description = '';
-    $item->xfn = '';
-    $item->status = '';
+    //$item->attr_title = '';
+    // $item->description = '';
+    // $item->target = '';
+    // $item->xfn = '';
+    // $item->status = '';
     return $item;
 }
 

@@ -396,4 +396,56 @@ function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
     return $item;
 }
 
+//orders table created over theme switch
+function your_set_tables_function(){
+    global $wpdb;
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE `orders` (
+                           id int(11) NOT NULL AUTO_INCREMENT,
+                           username 	varchar(100)  NOT NULL,
+                           contact_no BIGINT(20) NOT NULL,
+                           email varchar(50) NOT NULL,
+                           shipping_address varchar(255) NOT NULL,
+                           billing_address varchar(255) NOT NULL,
+                           payment_mode varchar(10) NOT NULL,
+                           total_items INT(10) NOT NULL,
+                           total_amount INT(10) NOT NULL,
+                           PRIMARY KEY (id)
+                          ) $charset_collate;";
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+add_action("after_switch_theme", "your_set_tables_function");
+
+//insert order details in order table
+function order_confirmation() {
+    global $wpdb;
+
+    foreach ($_SESSION['cart_items'] as $k=>$v) {
+        $product_qty[] = [$k => $v['p_qty']];
+    }
+
+    if ( isset( $_POST['submit'] ) ){
+    $data = array(
+        'username' => $_POST['user_name'],
+        'contact_no' => 9050520415,
+        'email' => $_POST['user_email'],
+        'shipping_address' => $_POST['shipping_add'],
+        'billing_address' => $_POST['billing_add'],
+        'payment_mode' => $_POST['paymentMtd'],
+        'total_items' => $_POST['cart_item'],
+        'total_amount' => $_POST['total_price'],
+        'product_id_qty' => json_encode($product_qty)
+     );
+    $wpdb->insert('orders',$data);
+    }
+    $lastid = $wpdb->insert_id;
+
+    if($lastid){
+        unset($_SESSION["cart_items"]);
+        wp_redirect(home_url());
+    }
+}
+add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
+add_action('admin_post_confirmation', 'order_confirmation' );
 ?>

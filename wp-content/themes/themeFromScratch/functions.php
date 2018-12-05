@@ -247,6 +247,56 @@ add_shortcode('copyright-year', function($atts, $content)
         return "{$print_sign} {$start} - {$current_year}";
 });
 
+//
+function orders(){
+    //add_theme_support('menus');
+    $labels = array(
+        'name' => 'Orders',
+        'all_items' => 'All Orders',
+        'view_item' => 'View Orders',
+        'menu_name' => 'Orders',
+    );
+
+    // register post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'has_archive' => true,
+        'show_ui' => true,
+        'capability_type' => 'post',
+        'hierarchical' => false,
+        'rewrite' => array('slug' => 'orders'),
+        'query_var' => true,
+        'show_in_nav_menus' => true,
+        'menu_icon' => 'dashicons-randomize',
+
+        'supports' => array(
+            'title',
+            'editor',
+            'author',
+            'excerpt',
+            'trackbacks',
+            'custom-fields',
+            'comments',
+            'revisions',
+            'thumbnail',
+            'page-attributes'
+        )
+    );
+    register_post_type( 'orders', $args );
+}
+add_action( 'init', 'orders' );
+
+//back end orders details for the custom post
+function orders_columns($columns){
+    $newColumns = array();
+    $newColumns['id'] = 'Order ID';
+    $newColumns['total_items'] = 'Total items';
+    $newColumns['total_amount'] = 'Total cost';
+    $newColumns['payment_mode'] = 'Payment Method';
+    return $newColumns;
+}
+add_filter('manage_orders_posts_columns','orders_columns');
 
 // My-Products Custom Post Type
 function product_init() {

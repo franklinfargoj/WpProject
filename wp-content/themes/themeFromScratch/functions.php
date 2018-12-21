@@ -42,7 +42,6 @@ add_action('wp_enqueue_scripts','my_theme_scripts_function');
 function my_user_cart() {
 
     if(!empty($_SESSION['cart_items'])){
-
         if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
             $_SESSION['cart_items'][$_POST['product_id']]['p_qty']+=1;
         }else{
@@ -53,7 +52,6 @@ function my_user_cart() {
             );
         }
     }else{
-
         $_SESSION['cart_items'][$_POST['product_id']] = array(
             'p_id'   => $_POST['product_id'],
             'p_price' => $_POST['price'],
@@ -66,7 +64,6 @@ function my_user_cart() {
         $total+= $value['p_price']* $value['p_qty'];
         $qty_cart+=$value['p_qty'];
     }
-
 
     $cart_price = array(
         'product' =>   $_SESSION['cart_items'][$_POST['product_id']],
@@ -104,7 +101,6 @@ function downgrade_cart_qty(){
         'sub_total' => $_SESSION['cart_items'][$_POST['product_id']],
         'total' => $total
     );
-
 
     echo json_encode($cart_price);
     die;
@@ -159,12 +155,6 @@ function userlogin(){
 }
 add_action("wp_ajax_userlogin","userlogin");
 add_action("wp_ajax_nopriv_userlogin","userlogin");
-
-
-//function admin_default_page() {
-//    return 'https://careers.slb.com/';
-//}
-//add_filter('login_redirect', 'admin_default_page');
 
 //custom post for corosal
 function create_post_type() {
@@ -246,46 +236,6 @@ add_shortcode('copyright-year', function($atts, $content)
     else
         return "{$print_sign} {$start} - {$current_year}";
 });
-
-//
-function orders(){
-    //add_theme_support('menus');
-    $labels = array(
-        'name' => 'Orders',
-        'all_items' => 'All Orders',
-        'view_item' => 'View Orders',
-        'menu_name' => 'Orders',
-    );
-
-    // register post type
-    $args = array(
-        'labels' => $labels,
-        'public' => true,
-        'has_archive' => true,
-        'show_ui' => true,
-        'capability_type' => 'post',
-        'hierarchical' => false,
-        'rewrite' => array('slug' => 'orders'),
-        'query_var' => true,
-        'show_in_nav_menus' => true,
-        'menu_icon' => 'dashicons-randomize',
-
-        'supports' => array(
-            'title',
-            'editor',
-            'author',
-            'excerpt',
-            'trackbacks',
-            'custom-fields',
-            'comments',
-            'revisions',
-            'thumbnail',
-            'page-attributes'
-        )
-    );
-    register_post_type( 'orders', $args );
-}
-add_action( 'init', 'orders' );
 
 //back end orders details for the custom post
 function orders_columns($columns){
@@ -498,4 +448,209 @@ function order_confirmation() {
 }
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
 add_action('admin_post_confirmation', 'order_confirmation' );
+
+//add_action( 'admin_menu', 'register_my_custom_menu_page' );
+//function register_my_custom_menu_page() {
+//    // add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
+//    add_menu_page( 'Custom Menu Page Title', 'Orders', 'manage_options', 'orders.php', 'admin_orders_page', 'dashicons-welcome-widgets-menus', 90 );
+//}
+//
+//function admin_orders_page(){
+//    global $wpdb;
+//    $orders = $wpdb->get_results("SELECT id,username,total_items,total_amount FROM orders");
+//    echo '<table id="ordersTable">';
+//    echo "<thead><tr><th>Order Id</th><th>Customer name</th><th>Total items</th><th>Total amount</th><th>Order details</th></tr></thead>";
+//    foreach($orders as $key =>$getRow ){
+//        echo "<tbody>
+//                  <tr>
+//                  <td> $getRow->id </td>
+//                  <td> $getRow->username </td>
+//                  <td> $getRow->total_items </td>
+//                  <td> $getRow->total_amount </td>
+//                  <td><a href=''>View</a> </td>
+//                  </tr>
+//              </tbody>";
+//    }
+//    echo "</table>";
+//}
+
+if(is_admin())
+{
+    new Paulund_Wp_List_Table();
+}
+/**
+ * Paulund_Wp_List_Table class will create the page to load the table
+ */
+class Paulund_Wp_List_Table
+{
+    /*
+     * Constructor will create the menu item
+     */
+    public function __construct()
+    {
+        add_action( 'admin_menu', array($this, 'add_menu_orders' ));
+    }
+    /*
+     * Menu item will allow us to load the page to display the table
+     */
+    public function add_menu_orders()
+    {
+
+
+
+            // Show my WP_List_Table
+            add_menu_page( 'Orders List Table', 'Orders', 'manage_options', 'orders-lists', array($this, 'list_table_page') );
+
+
+
+
+    }
+    /**
+     * Display the list table page
+     * @return Void
+     */
+    public function list_table_page()
+    {
+        if(isset($_GET['view_record'])) :
+            // Show my edit hotel form
+            $order_id = $_GET['view_record'];
+            global $wpdb;
+            $orders = $wpdb->get_results("SELECT * FROM orders WHERE id= $order_id",ARRAY_A);
+
+            echo '<h3>'."Username".'<span style="display:inline-block; width: 65px;"></span>'.$orders[0]['username'].'</h3>';
+            echo '<h3>'."Phone number".'<span style="display:inline-block; width: 40px;"></span>'.$orders[0]['contact_no'].'</h3>';
+            echo '<h3>'."User Email".'<span style="display:inline-block; width: 70px;"></span>'.$orders[0]['email'].'</h3>';
+            echo '<h3>'."Shipping address".'<span style="display:inline-block; width: 32px;"></span>'.$orders[0]['shipping_address'].'</h3>';
+            echo '<h3>'."Billing address".'<span style="display:inline-block; width: 50px;"></span>'.$orders[0]['billing_address'].'</h3>';
+            echo '<h3>'."Mode of payment".'<span style="display:inline-block; width: 30px;"></span>'.$orders[0]['payment_mode'].'</h3>';
+            echo '<h3>'."Cart items".'<span style="display:inline-block; width: 92px;"></span>'.$orders[0]['total_items'].'</h3>';
+            echo '<h3>'."Total cost".'<span style="display:inline-block; width: 94px;"></span>'.$orders[0]['total_amount'].'</h3>';
+
+            $products_qty = json_decode($orders[0]['product_id_qty']);
+            echo '<table class="table table-dark">';
+            echo '<thead><tr>
+                        <th><h3>Product name</th>
+                        <th><h3>Qty</th>
+                 </tr></thead>';
+
+            foreach($products_qty as $k=>$value)
+            {
+                $x = (array)$value;
+                $product_id = array_keys($x)[0];
+                $qty = array_values($x)[0];
+
+                echo "<tbody>
+                      <tr>
+                          <td>".get_the_title($product_id ) ."</td>
+                          <td>  $qty </td>
+                      </tr>
+                      </tbody>";
+
+            }
+            echo '</table>';
+
+        else :
+
+            $exampleListTable = new Example_List_Table();
+            $exampleListTable->prepare_items();
+            ?>
+            <div class="wrap">
+                <div id="icon-users" class="icon32"></div>
+                <h2>Customer orders</h2>
+                <?php $exampleListTable->display(); ?>
+            </div>
+            <?php
+
+        endif;
+    }
+}
+// WP_List_Table is not loaded automatically so we need to load it in our application
+if( ! class_exists( 'WP_List_Table' ) ) {
+    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+}
+
+/*
+ * Create a new table class that will extend the WP_List_Table
+ */
+class Example_List_Table extends WP_List_Table
+{
+    /*
+     * Prepare the items for the table to process
+     * @return Void
+     */
+    public function prepare_items()
+    {
+        $columns = $this->get_columns();
+        $data = $this->table_data();
+
+        $perPage = 3;
+        $currentPage = $this->get_pagenum();
+        $totalItems = count($data);
+        $this->set_pagination_args( array(
+            'total_items' => $totalItems,
+            'per_page'    => $perPage
+        ) );
+        $data = array_slice($data,(($currentPage-1)*$perPage),$perPage);
+        $this->_column_headers = array($columns);
+        $this->items = $data;
+    }
+
+    /*
+     * Override the parent columns method. Defines the columns to use in your listing table
+     * @return Array
+     */
+    public function get_columns()
+    {
+        $columns = array(
+            'id'          => 'Order Id',
+            'username'       => 'Customer name',
+            'total_itm' => 'Total items',
+            'amount'        => 'Total amount',
+            'view' => 'View'
+        );
+        return $columns;
+    }
+
+    /*
+     * Get the table data
+     * @return Array
+     */
+    private function table_data()
+    {
+        $data = [];
+        global $wpdb;
+        $orders = $wpdb->get_results("SELECT id,username,total_items,total_amount FROM orders",ARRAY_A);
+        foreach($orders as $key =>$getRow ){
+            $data[] = array(
+                'id'          => $getRow['id'],
+                'username'       => $getRow['username'],
+                'total_itm' => $getRow['total_items'],
+                'amount'        => $getRow['total_amount'],
+                'view' => '<a href="'. admin_url('admin.php?page=orders-lists&view_record='.$getRow['id'] ).'">View details</a>'
+                );
+        }
+        return $data;
+    }
+
+    /*
+     * Define what data to show on each column of the table
+     * @param  Array $item        Data
+     * @param  String $column_name - Current column name
+     * @return Mixed
+     */
+    public function column_default( $item, $column_name )
+    {
+        switch( $column_name ) {
+            case 'id':
+            case 'username':
+            case 'total_itm':
+            case 'amount':
+            case 'view':
+                return $item[ $column_name ];
+            default:
+                return print_r( $item, true ) ;
+        }
+    }
+}
+
 ?>

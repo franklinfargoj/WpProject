@@ -219,7 +219,6 @@ function my_custom_menus() {
 }
 add_action( 'init', 'my_custom_menus' );
 
-
 //copyright symbol and current year
 add_shortcode('copyright-year', function($atts, $content)
 {
@@ -476,12 +475,12 @@ add_action('admin_post_confirmation', 'order_confirmation' );
 
 if(is_admin())
 {
-    new Paulund_Wp_List_Table();
+    new Orders_Wp_List_Table();
 }
 /**
- * Paulund_Wp_List_Table class will create the page to load the table
+ * Orders_Wp_List_Table class will create the page to load the table
  */
-class Paulund_Wp_List_Table
+class Orders_Wp_List_Table
 {
     /*
      * Constructor will create the menu item
@@ -495,15 +494,8 @@ class Paulund_Wp_List_Table
      */
     public function add_menu_orders()
     {
-
-
-
             // Show my WP_List_Table
             add_menu_page( 'Orders List Table', 'Orders', 'manage_options', 'orders-lists', array($this, 'list_table_page') );
-
-
-
-
     }
     /**
      * Display the list table page
@@ -511,11 +503,18 @@ class Paulund_Wp_List_Table
      */
     public function list_table_page()
     {
-        if(isset($_GET['view_record'])) :
-            // Show my edit hotel form
+        if(isset($_GET['view_record'])) {
+
+            // Show my edit orders form
             $order_id = $_GET['view_record'];
             global $wpdb;
             $orders = $wpdb->get_results("SELECT * FROM orders WHERE id= $order_id",ARRAY_A);
+
+            if(isset($_POST['update_button'])){
+                global $wpdb;
+                $status = $_POST['status'];
+                $update =  $wpdb->query("UPDATE orders SET status=".'"'.$status.'"'." "."WHERE id=$order_id");
+            }
 
             echo '<h3>'."Username".'<span style="display:inline-block; width: 65px;"></span>'.$orders[0]['username'].'</h3>';
             echo '<h3>'."Phone number".'<span style="display:inline-block; width: 40px;"></span>'.$orders[0]['contact_no'].'</h3>';
@@ -526,11 +525,15 @@ class Paulund_Wp_List_Table
             echo '<h3>'."Cart items".'<span style="display:inline-block; width: 92px;"></span>'.$orders[0]['total_items'].'</h3>';
             echo '<h3>'."Total cost".'<span style="display:inline-block; width: 94px;"></span>'.$orders[0]['total_amount'].'</h3>';
 
+           if(!empty($orders[0]['status'])){
+                echo '<h2>'."Order status".'<span style="display:inline-block; width: 94px;"></span>'.$orders[0]['status'].'</h2>';
+            }
+
             $products_qty = json_decode($orders[0]['product_id_qty']);
             echo '<table class="table table-dark">';
             echo '<thead><tr>
-                        <th><h3>Product name</th>
-                        <th><h3>Qty</th>
+                        <th><h5>Product name</th>
+                        <th><h5>Qty</th>
                  </tr></thead>';
 
             foreach($products_qty as $k=>$value)
@@ -538,41 +541,55 @@ class Paulund_Wp_List_Table
                 $x = (array)$value;
                 $product_id = array_keys($x)[0];
                 $qty = array_values($x)[0];
-
                 echo "<tbody>
                       <tr>
                           <td>".get_the_title($product_id ) ."</td>
                           <td>  $qty </td>
                       </tr>
                       </tbody>";
-
             }
             echo '</table>';
 
-        else :
+            echo '<h4>Order status<h4>';
+                echo '<form method="post">
+                    <select name="status">                  
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="completed">Completed</option>                 
+                    </select>
+                    <br><br> 
+                    <input type="submit" value="Update" id="update_button" name="update_button" class="update_button"/>
+                    </form>';
 
-            $exampleListTable = new Example_List_Table();
-            $exampleListTable->prepare_items();
+        }else{
+            $ordersListTable = new Orders_List_Table();
+            $ordersListTable->prepare_items();
             ?>
             <div class="wrap">
                 <div id="icon-users" class="icon32"></div>
                 <h2>Customer orders</h2>
-                <?php $exampleListTable->display(); ?>
+                <?php $ordersListTable->display(); ?>
             </div>
             <?php
+        }
 
-        endif;
+        if($update == 1){
+            wp_redirect(admin_url('admin.php?page=orders-lists&view_record='));
+            exit;
+        }
+
     }
 }
+
 // WP_List_Table is not loaded automatically so we need to load it in our application
 if( ! class_exists( 'WP_List_Table' ) ) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
 /*
- * Create a new table class that will extend the WP_List_Table
+ * Create a orders table class that will extend the WP_List_Table
  */
-class Example_List_Table extends WP_List_Table
+class Orders_List_Table extends WP_List_Table
 {
     /*
      * Prepare the items for the table to process
@@ -582,7 +599,6 @@ class Example_List_Table extends WP_List_Table
     {
         $columns = $this->get_columns();
         $data = $this->table_data();
-
         $perPage = 3;
         $currentPage = $this->get_pagenum();
         $totalItems = count($data);
@@ -652,5 +668,4 @@ class Example_List_Table extends WP_List_Table
         }
     }
 }
-
 ?>

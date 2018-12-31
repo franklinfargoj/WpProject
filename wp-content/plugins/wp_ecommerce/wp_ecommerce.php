@@ -21,6 +21,7 @@ function create_orders_table_on_plugin_activation() {
                            total_items INT(10) NOT NULL,
                            total_amount INT(10) NOT NULL,
                            product_id_qty varchar(100) NOT NULL,
+                           status varchar(100) NOT NULL,
                            PRIMARY KEY (id)
                           ) $charset_collate;";
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -46,7 +47,7 @@ function product_init() {
         'not_found' =>  'No Products Found',
         'not_found_in_trash' => 'No Products found in Trash',
         'parent_item_colon' => '',
-        'menu_name' => 'WP_ecommerce',
+        'menu_name' => 'WP_Ecommerce',
     );
 
     // register post type
@@ -142,20 +143,7 @@ function my_product_save_price($post_id){
 add_action('save_post','my_product_save_price');
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//order listing
 if(is_admin())
 {
     new Orders_Wp_List_Table();
@@ -178,7 +166,7 @@ class Orders_Wp_List_Table
     public function add_menu_orders()
     {
         // Show my WP_List_Table
-        add_menu_page( 'Orders List Table', 'Orders', 'manage_options', 'orders-lists', array($this, 'list_table_page') );
+        add_submenu_page( 'edit.php?post_type=my-product', 'Orders List Table', 'Orders', 'manage_options', 'orders-lists', array($this, 'list_table_page') );
     }
     /**
      * Display the list table page
@@ -213,7 +201,7 @@ class Orders_Wp_List_Table
             }
 
             $products_qty = json_decode($orders[0]['product_id_qty']);
-            echo '<table class="table table-dark">';
+            echo '<table>';
             echo '<thead><tr>
                         <th><h5>Product name</th>
                         <th><h5>Qty</th>
@@ -262,7 +250,6 @@ class Orders_Wp_List_Table
 
     }
 }
-
 
 // WP_List_Table is not loaded automatically so we need to load it in our application
 if( ! class_exists( 'WP_List_Table' ) ) {
@@ -353,7 +340,6 @@ class Orders_List_Table extends WP_List_Table
     }
 }
 
-
 //insert order details in order table
 function order_confirmation() {
     global $wpdb;
@@ -380,30 +366,11 @@ function order_confirmation() {
 
     if($lastid){
         unset($_SESSION["cart_items"]);
-       // wp_redirect(home_url());
         $template = locate_template('thankyou-template.php');
         load_template($template);
     }
 }
 add_action('admin_post_confirmation', 'order_confirmation' );
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
-
-
-/*add_action('admin_menu', 'ecommerce_setup_menu');
-
-function ecommerce_setup_menu(){
-    add_menu_page( 'Ecommerce', 'WP Ecommerce', 'manage_options',__FILE__,'test-plugin', 'test_init' );
-    add_submenu_page(__FILE__, 'Custom', 'Custom', 'manage_options', 'clivern_render_custom_page');
-    add_submenu_page(__FILE__, 'About', 'About', 'manage_options', 'clivern_render_about_page');
-
-
-function test_init(){
-    echo "<h1>Hello World!</h1>";
-}
-}*/
-
-
-
-
 
 ?>

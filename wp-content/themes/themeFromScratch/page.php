@@ -47,32 +47,30 @@
             ?>
 
                 <div>
+                <?php the_title(); ?><p>
+
                 <?php
                     if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it.
                         the_post_thumbnail('thumbnail');
                     }
                 ?>
-                </div>
+                </div><p>
 
                 <div>
-                <?php
-                the_title();
-                ?>
+
                     <div>
                      <span  class="add_cart_<?php echo $post->ID;?>" style="color:#FE980F"></span>
                     </div>
                 </div>
-
-
                 Rs.  <span id="prod_<?php echo $post->ID; ?>"><?php echo get_post_meta($post->ID, 'my_product_price_value_key', true); ?></span>
                 Qty  <INPUT id="txtNumber<?php echo $post->ID; ?>" onkeypress="return isNumberKey(event)" type="number" min="1" value='1' style="width: 50px;">
 
                 </br>
-                <a href="javascript:void(0);" class="btn add-to-cart" data-value="<?php echo $post->ID; ?>">
-                <button>Add to cart</button>
-                </a>
-
-                <button>Wishlist</button>
+                    <a href="javascript:void(0);" class="btn add-to-cart" data-value="<?php echo $post->ID; ?>">
+                        <button>Add to cart</button>
+                    </a>
+                    <button>Wishlist</button>
+                </br>
                 </br>
 
                 <?php

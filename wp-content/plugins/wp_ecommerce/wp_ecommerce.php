@@ -374,7 +374,7 @@ add_action('admin_post_confirmation', 'order_confirmation' );
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
 
 function listing_products() {
-   // if(get_query_var('pagename')==''){
+    if(get_query_var('pagename')==''){
         global $wpdb;
         $custom_post_type = 'post';
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'my-product' and post_status = 'publish'", $custom_post_type ), ARRAY_A );
@@ -387,14 +387,118 @@ function listing_products() {
             $output .='&emsp;'.'Qty<INPUT id="txtNumber'.$post['ID'].'" onkeypress="return isNumberKey(event)" type="number" min="1" value="1" style="width: 50px;">';
             $output .= '</div><p>';
             $output .='<div> <div><span style="color:#FE980F"></span></div></div>';
-            $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>         
-                        <button>Wishlist</button>
+            $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>   
+                      
+                        <input type="hidden" id="custId" name="custId" value="3487">
+                        <a href="javascript:void(0);" class="btn addto-wishlist" data-value='.$post['ID'].'><button>Wishlist</button></a> 
                         </br>
                         </br>';
-     //   }
+        }
     }
  return $output;
 }
 add_shortcode( 'frontend_products','listing_products');
+
+//access to the session
+function myStartSession() {
+    session_start();
+}
+add_action('init', 'myStartSession', 1);
+
+//Set session for products added to cart
+function my_user_cart() {
+
+    if(!empty($_SESSION['cart_items'])){
+        if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
+            $_SESSION['cart_items'][$_POST['product_id']]['p_qty']+=1;
+        }else{
+            $_SESSION['cart_items'][$_POST['product_id']] = array(
+                'p_id'   => $_POST['product_id'],
+                'p_price' => $_POST['price'],
+                'p_qty' =>  $_POST['quantity']
+            );
+        }
+    }else{
+        $_SESSION['cart_items'][$_POST['product_id']] = array(
+            'p_id'   => $_POST['product_id'],
+            'p_price' => $_POST['price'],
+            'p_qty' =>  $_POST['quantity']
+        );
+    }
+    $qty_cart = 0;
+    $total = 0;
+    foreach ($_SESSION['cart_items'] as $key=>$value){
+        $total+= $value['p_price']* $value['p_qty'];
+        $qty_cart+=$value['p_qty'];
+    }
+
+    $cart_price = array(
+        'product' =>   $_SESSION['cart_items'][$_POST['product_id']],
+        'total' => $total,
+        'qty_cart'=>$qty_cart
+    );
+
+    // echo json_encode($_SESSION['cart_items'][$_POST['product_id']]);
+    echo json_encode($cart_price);
+    die;
+}
+add_action("wp_ajax_add_to_cart", "my_user_cart");
+add_action("wp_ajax_nopriv_add_to_cart", "my_user_cart");
+
+add_action("wp_ajax_cart_qty_increase","my_user_cart");
+add_action("wp_ajax_nopriv_cart_qty_increase","my_user_cart");
+
+//Reduce array by prouct id from cart session
+function downgrade_cart_qty(){
+    // print_r($_SESSION['cart_items'][$_POST['product_id']]['p_qty']);die;
+    if($_SESSION['cart_items'][$_POST['product_id']]['p_qty'] > 1){
+        if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
+            $_SESSION['cart_items'][$_POST['product_id']]['p_qty']-=1;
+        }
+    }
+
+    $total = 0;
+    $p_price =0;
+    foreach ($_SESSION['cart_items'] as $key=>$value){
+        $total+= $value['p_price']* $value['p_qty'];
+        $p_price = $value['p_price']* $value['p_qty'];
+    }
+
+    $cart_price = array(
+        'sub_total' => $_SESSION['cart_items'][$_POST['product_id']],
+        'total' => $total
+    );
+
+    echo json_encode($cart_price);
+    die;
+}
+add_action("wp_ajax_cart_qty_decrease","downgrade_cart_qty");
+add_action("wp_ajax_nopriv_cart_qty_decrease","downgrade_cart_qty");
+
+//Remove array out of the cart session (fadeout in jquery)
+function out_of_cart() {
+    foreach ($_SESSION['cart_items'] as $key => $value){
+        if($value['p_id'] == $_POST['product_id']){
+            unset($_SESSION['cart_items'][$key]);
+        }
+    }
+    $qty=0;
+    $total = 0;
+    foreach ($_SESSION['cart_items'] as $key=>$value){
+        $total+= $value['p_price']* $value['p_qty'];
+        $qty+=$value['p_qty'];
+    }
+
+    $cart_price = array(
+        'product_id' => $_SESSION['cart_items'],
+        'total' => $total,
+        'qty' => $qty
+    );
+
+    echo json_encode($cart_price);
+    die;
+}
+add_action("wp_ajax_delete_from_cart", "out_of_cart");
+add_action("wp_ajax_nopriv_delete_from_cart", "out_of_cart");
 
 ?>

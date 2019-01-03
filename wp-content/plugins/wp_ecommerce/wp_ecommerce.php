@@ -351,7 +351,7 @@ function order_confirmation() {
     if(isset( $_POST['submit'] )){
         $data = array(
             'username' => $_POST['user_name'],
-            'contact_no' => 789,
+            'contact_no' => '',
             'email' => $_POST['user_email'],
             'shipping_address' => $_POST['shipping_add'],
             'billing_address' => $_POST['billing_add'],
@@ -372,5 +372,29 @@ function order_confirmation() {
 }
 add_action('admin_post_confirmation', 'order_confirmation' );
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
+
+function listing_products() {
+   // if(get_query_var('pagename')==''){
+        global $wpdb;
+        $custom_post_type = 'post';
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = 'my-product' and post_status = 'publish'", $custom_post_type ), ARRAY_A );
+
+        $output = '';
+        foreach( $results as $index => $post ) {
+            $output .= '<div>'.$post['post_title'] .'<p>';
+            $output .= get_the_post_thumbnail( $post['ID'], 'thumbnail').'<br>';
+            $output .= 'Rs.<span id="prod_'.$post['ID'].'">'.get_post_meta($post['ID'], 'my_product_price_value_key', true).'</span>';
+            $output .='&emsp;'.'Qty<INPUT id="txtNumber'.$post['ID'].'" onkeypress="return isNumberKey(event)" type="number" min="1" value="1" style="width: 50px;">';
+            $output .= '</div><p>';
+            $output .='<div> <div><span style="color:#FE980F"></span></div></div>';
+            $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>         
+                        <button>Wishlist</button>
+                        </br>
+                        </br>';
+     //   }
+    }
+ return $output;
+}
+add_shortcode( 'frontend_products','listing_products');
 
 ?>

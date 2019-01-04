@@ -387,7 +387,8 @@ function listing_products() {
             $output .='&emsp;'.'Qty<INPUT id="txtNumber'.$post['ID'].'" onkeypress="return isNumberKey(event)" type="number" min="1" value="1" style="width: 50px;">';
             $output .= '</div><p>';
             $output .='<div> <div><span style="color:#FE980F"></span></div></div>';
-            $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>     
+            $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>
+                 <input type="hidden" id="custId" name="custId" value='.get_current_user_id().'>
                         <a href="javascript:void(0);" class="btn addto-wishlist" data-value='.$post['ID'].'><button>Wishlist</button></a> 
                         </br>
                         </br>';
@@ -500,53 +501,35 @@ add_action("wp_ajax_delete_from_cart", "out_of_cart");
 add_action("wp_ajax_nopriv_delete_from_cart", "out_of_cart");
 
 function my_user_wishlist() {
-    $product_ids = get_user_meta(get_current_user_id(), 'user_wishlist', true);
-
-    if(empty($product_ids)){
-        add_user_meta( get_current_user_id(), 'user_wishlist', json_encode(array($_POST['product_id'])));
-    }else{
-        if (!in_array($_POST['product_id'], json_decode($product_ids) ))
-        {
-            $added_wislist= json_decode($product_ids);
-            $current_wishlisted_product_id = $_POST['product_id'];
-            array_push($added_wislist,$current_wishlisted_product_id);
-            update_user_meta( get_current_user_id(), 'user_wishlist',json_encode($added_wislist));
-        }
-    }
+      $product_ids = get_user_meta(get_current_user_id(), 'user_wishlist', true);
+      if(empty($product_ids)){
+          add_user_meta( get_current_user_id(), 'user_wishlist', json_encode(array($_POST['product_id'])));
+      }else{
+          if (!in_array($_POST['product_id'], json_decode($product_ids) ))
+          {
+              $added_wislist= json_decode($product_ids);
+              $current_wishlisted_product_id = $_POST['product_id'];
+              array_push($added_wislist,$current_wishlisted_product_id);
+              update_user_meta( get_current_user_id(), 'user_wishlist',json_encode($added_wislist));
+          }
+      }
+  die;
 }
 
 add_action("wp_ajax_add_to_wishlist", "my_user_wishlist");
 add_action("wp_ajax_nopriv_add_to_wishlist", "my_user_wishlist");
 
 function wishlist_remove_product() {
-
     $wishlist = json_decode(get_user_meta(get_current_user_id(), 'user_wishlist', true));
 
-    foreach ($wishlist as $k => $v){
-        if($v == $_POST['product_id']){
-          unset($wishlist[$k]) ;
-        }
+    foreach ($wishlist as $k => $v) {
+            if ($v === $_POST['product_id']) {
+                unset($wishlist[$k]);
+            }
     }
-    array_values($wishlist);
-    var_dump($wishlist);
-  //  die;
-
-//    if(get_current_user_id()){
-//    $wishlist = json_decode(get_user_meta(get_current_user_id(), 'user_wishlist', true));
-//    $a = (array)$wishlist;
-//    $key = array_search($_POST['product_id'],$a);
-//
-//        echo $key;
-//
-//    unset($a[$key]);
-    update_user_meta( get_current_user_id(), 'user_wishlist',json_encode($wishlist));
-//    }else{
-//        wp_redirect(site_url().'/login/');
-//        exit;
-//    }
+    update_user_meta(get_current_user_id(), 'user_wishlist', json_encode(array_values($wishlist)));
     die();
 }
-
 add_action("wp_ajax_remove_from_wishlist", "wishlist_remove_product");
 add_action("wp_ajax_nopriv_remove_from_wishlist", "wishlist_remove_product");
 

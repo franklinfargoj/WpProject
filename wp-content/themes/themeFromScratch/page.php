@@ -38,8 +38,6 @@
             }
             ?>
 
-            <?php  echo do_shortcode("[frontend_products]"); ?>
-
         </div>
 
         <div class="col-lg-2">

@@ -44,28 +44,28 @@ jQuery(document).ready(function() {
 
     $('.addto-wishlist').click(function () {
         var product_id = $(this).attr('data-value');
+        var custId = $('#custId').val();
+        if(custId != 0){
         jQuery.ajax({
             type : "post",
             dataType : "json",
             url : ajax_params.ajax_url,
             data : {action: "add_to_wishlist", product_id : product_id}
         })
+        }else{
+            window.location.replace("http://10.0.11.43/WpProject/login");
+        }
     });
-
 
     $('.remove_wishlist').click(function () {
         var product_id = $(this).attr('data-value');
-
         jQuery.ajax({
             type : "post",
             dataType : "json",
             url : ajax_params.ajax_url,
             data : {action: "remove_from_wishlist", product_id : product_id}
-
         })
-
     });
-
 
     $('.cart_qty_up').click(function () {
         var product_id = $(this).attr('data-value');
@@ -102,8 +102,6 @@ jQuery(document).ready(function() {
             success : function( response ) {
                 //console.log(response.qty);
 
-
-
                 $(".cart_list_"+product_id).fadeOut();
                 $("#final_amount").html(response.total);
 
@@ -117,7 +115,6 @@ jQuery(document).ready(function() {
     });
 
     $('.cart_qty_down').click(function () {
-
         var product_id = $(this).attr('data-value');
         jQuery.ajax({
             type: "post",
@@ -135,6 +132,7 @@ jQuery(document).ready(function() {
         })
     });
 
+    //redirects on click of Proceed to checkout
     $('#checkout').click(function () {
         window.location='./checkout/'
     });
@@ -143,6 +141,7 @@ jQuery(document).ready(function() {
         window.location='./login/'
     });
 
+    //redirects on click of Continue ON Checkout page
     $('#confirmation').click(function () {
         window.location='./confirmation/'
     });
@@ -168,7 +167,6 @@ jQuery(document).ready(function() {
         })
         return false;
     });
-
 
 });
 

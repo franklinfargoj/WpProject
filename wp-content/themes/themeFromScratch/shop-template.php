@@ -8,9 +8,9 @@ get_header();
         </div>
 
         <div class="col-lg-8">
-            <?php
-            echo do_shortcode("[frontend_products]");
-            ?>
+            <?php while ( have_posts() ) : the_post(); ?>
+                <?php the_content(); ?>
+            <?php endwhile; // end of the loop. ?>
         </div>
 
         <div class="col-lg-2">

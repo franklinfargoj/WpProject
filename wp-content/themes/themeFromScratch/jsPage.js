@@ -42,6 +42,31 @@ jQuery(document).ready(function() {
         })
     });
 
+    $('.addto-wishlist').click(function () {
+        var product_id = $(this).attr('data-value');
+        jQuery.ajax({
+            type : "post",
+            dataType : "json",
+            url : ajax_params.ajax_url,
+            data : {action: "add_to_wishlist", product_id : product_id}
+        })
+    });
+
+
+    $('.remove_wishlist').click(function () {
+        var product_id = $(this).attr('data-value');
+
+        jQuery.ajax({
+            type : "post",
+            dataType : "json",
+            url : ajax_params.ajax_url,
+            data : {action: "remove_from_wishlist", product_id : product_id}
+
+        })
+
+    });
+
+
     $('.cart_qty_up').click(function () {
         var product_id = $(this).attr('data-value');
         var price = $(this).attr('data-value1');

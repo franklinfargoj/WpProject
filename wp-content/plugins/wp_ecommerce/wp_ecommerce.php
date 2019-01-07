@@ -398,6 +398,36 @@ function listing_products() {
 }
 add_shortcode( 'frontend_products','listing_products');
 
+function wishlist_products(){
+
+    $wishlist = json_decode(get_user_meta(get_current_user_id(), 'user_wishlist', true));
+    $output = '';
+
+    $output .= '<h2> Wishlist Items</h2>
+                 <table class="table">
+                 <thead>
+                 <tr>
+                 <th>Product Name</th>
+                 <th>Image</th>
+                 <th>Price</th>
+                 <th>Action</th>
+                 <th>Action</th>
+                 </tr>
+                 </thead>';
+
+    foreach ($wishlist as $key => $value) {
+        $output .= '<tbody><td>'.get_the_title($value).'</td>';
+        $output .= '<td>'.get_the_post_thumbnail($value,'thumbnail').'</td>';
+        $output .= '<td>'.get_post_meta($value,'my_product_price_value_key', true).'</td>';
+        $output .= '<td><a href="javascript:void(0);" class="" data-value=$value><button>Add to cart</button></a></td>';
+        $output .= '<td><a href="javascript:void(0);" class="remove_wishlist" data-value='.$value.'><button>Remove</button></a></td></tbody>';
+    }
+    $output .='<div></table>';
+
+    return $output;
+}
+add_shortcode('frontend_wishlist','wishlist_products');
+
 //access to the session
 function myStartSession() {
     session_start();

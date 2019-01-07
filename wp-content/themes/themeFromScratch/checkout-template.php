@@ -11,59 +11,21 @@ if ( is_user_logged_in() ) {
     </div>
 
     <div class="col-lg-8">
-
         <?php
-        if ( is_user_logged_in() ) {
-            global $current_user;
-            echo "<pre>";
-            echo 'Hello, ' . $current_user->display_name . "\n";
-            echo 'User display ID: ' .$current_user->ID . "\n";
-            $total_items = 0;
-            $final_amount = 0;
-            if(!empty($_SESSION['cart_items'])){
-                foreach ($_SESSION['cart_items'] as $key=>$value){
-                    $total_items+= $value['p_qty'];
-                    $final_amount+=$value['p_qty']*$value['p_price'];
-                }
-            }
-            ?>
-
-            <h2>Checkout</h2>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Image</th>
-                    <th>Qty.</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-
-                if(!empty($_SESSION['cart_items'])){
-                foreach ($_SESSION['cart_items'] as $key=> $value){ ?>
-                <tr>
-                <td><?php echo get_the_title($value['p_id']); ?></td>
-                <td><?php echo get_the_post_thumbnail( $value['p_id'], 'thumbnail'); ?></td>
-                <td><?php echo $value['p_qty']; ?></td>
-                </tr>
-                <?php  }
-                }
+        if ( have_posts() ) {
+            while ( have_posts() ) : the_post();
                 ?>
-                </tbody>
-            </table>
-
-            <div style="margin-left: 490px;">
-                <?php echo $total_items; ?> ITEMS
-                <dt style="margin-left: 84px;">Total  Rs.<?php echo $final_amount;  ?></dt>
-                <button id="confirmation" type="button" class="btn btn-primary">Continue</button>
-            </div>
-
-        <?php
-        } else {
-            $login =get_site_url().'/login/';
-            wp_redirect($login);
-            die;
+                <div class="blog-post">
+                    <h2 class="blog-post-title"><?php the_title(); ?></h2>
+                    <?php
+                    if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it.
+                        the_post_thumbnail( 'thumbnail' );
+                    }
+                    ?>
+                    <?php the_content(); ?>
+                </div><!-- /.blog-post -->
+                <?php
+            endwhile;
         }
         ?>
     </div>

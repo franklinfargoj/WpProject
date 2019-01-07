@@ -496,6 +496,61 @@ function cart_items(){
 add_shortcode('frontend_cart','cart_items');
 
 
+
+function checkout_page(){
+
+    $output ='';
+
+    if ( is_user_logged_in() ) {
+        global $current_user;
+
+        $output .=  "<pre>";
+        $output .=  'Hello, ' .$current_user->display_name . "\n";
+        $output .=  'User display ID: ' .$current_user->ID . "\n";
+
+        $total_items = 0;
+        $final_amount = 0;
+        if(!empty($_SESSION['cart_items'])){
+            foreach ($_SESSION['cart_items'] as $key=>$value){
+                $total_items+= $value['p_qty'];
+                $final_amount+=$value['p_qty']*$value['p_price'];
+            }
+        }
+
+        $output .='<h2>Checkout</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Image</th>
+                    <th>Qty.</th>
+                </tr>
+                </thead>
+                <tbody>';
+        if(!empty($_SESSION['cart_items'])){
+            foreach ($_SESSION['cart_items'] as $key=> $value){
+                $output .='<tr><td>'.get_the_title($value['p_id']).'</td>';
+                $output .= '<td>'.get_the_post_thumbnail( $value['p_id'], 'thumbnail').'</td>';
+                $output .= '<td>'.$value['p_qty'].'</td></tr>';
+            }
+        }
+        $output .= '</tbody></table>';
+
+        $output .= '<div style="margin-left: 490px;">';
+        $output .= $total_items.' '.'Items';
+        $output .= '<dt style="margin-left: 84px;">Total  Rs.'.$final_amount.'</dt>';
+        $output .= '<button id="confirmation" type="button" class="btn btn-primary">Continue</button></div>';
+
+
+    } else {
+    $login =get_site_url().'/login/';
+    wp_redirect($login);
+    die;
+    }
+    return $output;
+}
+add_shortcode('checkout','checkout_page');
+
 //access to the session
 function myStartSession() {
     session_start();

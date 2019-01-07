@@ -373,6 +373,7 @@ function order_confirmation() {
 add_action('admin_post_confirmation', 'order_confirmation' );
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
 
+//function for listing products shortcode.
 function listing_products() {
     if(get_query_var('pagename')==''){
         global $wpdb;
@@ -398,6 +399,7 @@ function listing_products() {
 }
 add_shortcode( 'frontend_products','listing_products');
 
+//function for wishlist shortcode.
 function wishlist_products(){
 
     $wishlist = json_decode(get_user_meta(get_current_user_id(), 'user_wishlist', true));
@@ -428,7 +430,7 @@ function wishlist_products(){
 }
 add_shortcode('frontend_wishlist','wishlist_products');
 
-
+//function for cart shortcode
 function cart_items(){
     $output = '';
     $output = '<h2>Cart Items</h2>
@@ -496,11 +498,9 @@ function cart_items(){
 add_shortcode('frontend_cart','cart_items');
 
 
-
+// function for checkout shortcode
 function checkout_page(){
-
     $output ='';
-
     if ( is_user_logged_in() ) {
         global $current_user;
 
@@ -550,6 +550,58 @@ function checkout_page(){
     return $output;
 }
 add_shortcode('checkout','checkout_page');
+
+// function for order_confiramtion shortcode
+function order_confiramtion(){
+    $output ='';
+    $output .='<h3>Order Confirmation<h3>';
+    global $current_user;
+    $output .= 'Hello, ' .$current_user->display_name . "\n";
+
+
+
+    $output .= '<form action="'.esc_url( admin_url('admin-post.php') ).'" method="post">';
+    $output .= '<input type="hidden" id="user_name" name="user_name" value="'.$current_user->display_name .'">';
+    $output .= '<div class="form-row">
+                <textarea placeholder="Shipping address" id="shipping_add" name="shipping_add" cols="22" rows="3" required></textarea>
+                <span style="display:inline-block; width: 10px;"></span>
+                <textarea placeholder="Billing address" id="billing_add" name="billing_add" cols="22" rows="3" required></textarea>
+                </div>';
+    $output .= '<br>';
+    $output .= 'Email';
+    $output .= '<input class="form-control" type="text" placeholder="'. $current_user->user_email.'" readonly>';
+    $output .= '<input type="hidden" name="user_email" id="user_email" value="'.$current_user->user_email.'">';
+    $output .='<br>
+                <div class="form-group col-md-4">
+                <label for="inputState">Payment options</label>
+                <select id="paymentMtd" name="paymentMtd" class="form-control" >
+                    <option value="cod">COD</option>
+                    <option value="card">Credit/Card</option>
+                    <option value="netbank">Net banking</option>
+                </select>
+                </div>
+                <br>';
+    $total_price=0;
+    $total_quantity=0;
+    if(!empty($_SESSION['cart_items'])){
+        foreach($_SESSION['cart_items'] as $key=> $value){
+            $total_price+=$value['p_price']*$value['p_qty'];
+            $total_quantity+=$value['p_qty'];
+        }
+    }
+    $output .='<div class="form-row">';
+
+    $output .='<input type="hidden" id="cart_item" name="cart_item" value="'.$total_quantity.'">';
+    $output .='<span style="margin-left: 320px;">'.$total_quantity.' - ITEMS</span>';
+    $output .='<input type="hidden" name="total_price" id="total_price" value="'.$total_price.'">';
+    $output .='<span style="margin-left: 75px;" id="total_price" name="total_price">Total Payable   Rs. '.$total_price.'</span>';
+    $output .='<input type="hidden" name="action" value="confirmation">';
+    $output .='<button type="submit" name="submit" class="btn btn-primary mb-2" style="margin-left: 635px;">Submit Order</button>';
+    $output .='</div> </form>';
+    return $output;
+}
+add_shortcode('confirmation','order_confiramtion');
+
 
 //access to the session
 function myStartSession() {

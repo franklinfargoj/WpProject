@@ -428,6 +428,74 @@ function wishlist_products(){
 }
 add_shortcode('frontend_wishlist','wishlist_products');
 
+
+function cart_items(){
+    $output = '';
+    $output = '<h2>Cart Items</h2>
+               <table class="table">
+               <thead>
+               <tr>
+                    <th>Product Name</th>
+                    <th>Image</th>
+                    <th>Qty.</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+                </thead>';
+    if(!empty($_SESSION['cart_items'])){
+        foreach($_SESSION['cart_items'] as $key => $value){
+
+            $output .= '<tr class="cart_list_'.$value['p_id'].'">';
+            $output .= '<td>'.get_the_title($value['p_id']).'</td>';
+            $output .= '<td>'.get_the_post_thumbnail( $value['p_id'], 'thumbnail').'<td>';
+            $output .= '<td>
+                        <div>
+                            <a id="cart_qty_up" href="javascript:void(0);" class="cart_qty_up" data-value="'. $value['p_id'].'" data-value1="<?php echo get_post_meta( '. $value['p_id'] .'  , '.'my_product_price_value_key'.', true);?>">
+                            <button class="btn">+</button>
+                            </a>
+
+                            <span class="cart_qty_'.$value['p_id'].'">
+                            '. $value['p_qty'].'
+                            </span>
+
+                            <a class="cart_qty_down btn" href="javascript:void(0);" data-value="'.$value['p_id'].'">
+                            <button class="btn">-</button>
+                            </a>
+                        </div>
+                        </td>';
+            $output .= '<td>
+                        <span id="per_product_price'.$value['p_id'].'" class="per_product_price'.$value['p_id'].'">
+                        '.get_post_meta($value['p_id'], 'my_product_price_value_key', true) * $value['p_qty'].'
+                        </span></td>';
+            $output .= '<td><a href="javascript:void(0);" class="btn remove_from_cart" data-value="'.$value['p_id'].'">
+                        <button>Remove</button></a>
+                        <td></tr>';
+        }
+    }
+    $output .='<div></table>';
+    $output .='<div style="margin-left: 490px;"><dt>';
+    if (!empty($_SESSION['cart_items'])) {
+        $output .='Total  Rs.<span  id="final_amount" class="final_amount">';
+    }
+    if (!empty($_SESSION['cart_items'])) {
+                $total = 0;
+                foreach ($_SESSION['cart_items'] as $k=>$v){
+                    $total+= $v['p_price']*$v['p_qty'];
+                }
+                echo $total;
+    } else {
+                echo '';
+    }
+    $output .='</span></dt>';
+
+    if (!empty($_SESSION['cart_items'])) {
+        $output .='<button id="checkout" class="btn btn-primary">Proceed to checkout</button></div>';
+    }
+    return $output;
+}
+add_shortcode('frontend_cart','cart_items');
+
+
 //access to the session
 function myStartSession() {
     session_start();
@@ -562,5 +630,38 @@ function wishlist_remove_product() {
 }
 add_action("wp_ajax_remove_from_wishlist", "wishlist_remove_product");
 add_action("wp_ajax_nopriv_remove_from_wishlist", "wishlist_remove_product");
+
+//Added cart in nav menu in custom way
+add_filter( 'wp_get_nav_menu_items', 'custom_nav_menu_items', 20, 2 );
+
+function custom_nav_menu_items( $items, $menu ){
+    if($menu->slug=='primary-menu-links'){  //display cart only in header
+        $quantity = 0;
+        if(!empty($_SESSION['cart_items'])){
+            foreach ($_SESSION['cart_items'] as $k => $v) {
+                $quantity+= $v['p_qty'];
+            }
+        }
+        $quantity= "<span class='header_cart' style='color:black'>".$quantity."</span>";
+        $msg = "Cart(".$quantity.")";
+        $items[] = _custom_nav_menu_item($msg, get_home_url().'/cart/', 5 );
+    }
+    return $items;
+}
+
+function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
+    $item = new stdClass();
+    $item->title = $title;
+    $item->url = $url;
+    $item->ID = $parent;
+    $item->db_id = $item->ID;
+    $item->menu_order = $order;
+    $item->menu_item_parent = $item->ID;
+    $item->type = '';
+    $item->object = 'Primary menu';
+    $item->object_id = '';
+    $item->classes = array();
+    return $item;
+}
 
 ?>

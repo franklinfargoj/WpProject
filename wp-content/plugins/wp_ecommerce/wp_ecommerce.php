@@ -433,7 +433,7 @@ add_shortcode('frontend_wishlist','wishlist_products');
 //function for cart shortcode
 function cart_items(){
     $output = '';
-    $output = '<h2>Cart Items</h2>
+    $output = '
                <table class="table">
                <thead>
                <tr>
@@ -484,9 +484,9 @@ function cart_items(){
                 foreach ($_SESSION['cart_items'] as $k=>$v){
                     $total+= $v['p_price']*$v['p_qty'];
                 }
-                echo $total;
+        $output .= $total;
     } else {
-                echo '';
+        $output .= '';
     }
     $output .='</span></dt>';
 
@@ -507,7 +507,6 @@ function checkout_page(){
         $output .=  "<pre>";
         $output .=  'Hello, ' .$current_user->display_name . "\n";
         $output .=  'User display ID: ' .$current_user->ID . "\n";
-
         $total_items = 0;
         $final_amount = 0;
         if(!empty($_SESSION['cart_items'])){
@@ -516,7 +515,6 @@ function checkout_page(){
                 $final_amount+=$value['p_qty']*$value['p_price'];
             }
         }
-
         $output .='<h2>Checkout</h2>
             <table class="table">
                 <thead>
@@ -535,13 +533,10 @@ function checkout_page(){
             }
         }
         $output .= '</tbody></table>';
-
         $output .= '<div style="margin-left: 490px;">';
         $output .= $total_items.' '.'Items';
         $output .= '<dt style="margin-left: 84px;">Total  Rs.'.$final_amount.'</dt>';
         $output .= '<button id="confirmation" type="button" class="btn btn-primary">Continue</button></div>';
-
-
     } else {
     $login =get_site_url().'/login/';
     wp_redirect($login);
@@ -557,9 +552,6 @@ function order_confiramtion(){
     $output .='<h3>Order Confirmation<h3>';
     global $current_user;
     $output .= 'Hello, ' .$current_user->display_name . "\n";
-
-
-
     $output .= '<form action="'.esc_url( admin_url('admin-post.php') ).'" method="post">';
     $output .= '<input type="hidden" id="user_name" name="user_name" value="'.$current_user->display_name .'">';
     $output .= '<div class="form-row">

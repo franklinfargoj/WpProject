@@ -3,7 +3,6 @@
 get_header();
 ?>
 
-
 <body>
 <div class="container">
     <div class="row">
@@ -30,7 +29,6 @@ get_header();
                 endwhile;
             }
             ?>
-
         </div>
 
         <div class="col-lg-2">

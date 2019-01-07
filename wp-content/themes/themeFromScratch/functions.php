@@ -27,12 +27,10 @@ add_action('wp_login', 'myEndSession');*/
 
 //includes javascript page and Ajax used in JS.
 function my_theme_scripts_function() {
-    wp_enqueue_script( 'myscript', get_template_directory_uri() . '/jsPage.js');
-    wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
-}
+        wp_enqueue_script( 'myscript', get_template_directory_uri() . '/jsPage.js');
+        wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+    }
 add_action('wp_enqueue_scripts','my_theme_scripts_function');
-
-
 
 //checks if user exist exist and redirects to checkout else returns the login page
 function userlogin(){
@@ -179,51 +177,5 @@ function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
     $item->classes = array();
     return $item;
 }
-
-/*//orders table created over theme switch
-function your_set_tables_function(){
-    global $wpdb;
-    $charset_collate = $wpdb->get_charset_collate();
-    $sql = "CREATE TABLE `orders` (
-                           id int(11) NOT NULL AUTO_INCREMENT,
-                           username 	varchar(100)  NOT NULL,
-                           contact_no BIGINT(20) NOT NULL,
-                           email varchar(50) NOT NULL,
-                           shipping_address varchar(255) NOT NULL,
-                           billing_address varchar(255) NOT NULL,
-                           payment_mode varchar(10) NOT NULL,
-                           total_items INT(10) NOT NULL,
-                           total_amount INT(10) NOT NULL,
-                           PRIMARY KEY (id)
-                          ) $charset_collate;";
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
-}
-add_action("after_switch_theme", "your_set_tables_function");*/
-
-//add_action( 'admin_menu', 'register_my_custom_menu_page' );
-//function register_my_custom_menu_page() {
-//    // add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
-//    add_menu_page( 'Custom Menu Page Title', 'Orders', 'manage_options', 'orders.php', 'admin_orders_page', 'dashicons-welcome-widgets-menus', 90 );
-//}
-//
-//function admin_orders_page(){
-//    global $wpdb;
-//    $orders = $wpdb->get_results("SELECT id,username,total_items,total_amount FROM orders");
-//    echo '<table id="ordersTable">';
-//    echo "<thead><tr><th>Order Id</th><th>Customer name</th><th>Total items</th><th>Total amount</th><th>Order details</th></tr></thead>";
-//    foreach($orders as $key =>$getRow ){
-//        echo "<tbody>
-//                  <tr>
-//                  <td> $getRow->id </td>
-//                  <td> $getRow->username </td>
-//                  <td> $getRow->total_items </td>
-//                  <td> $getRow->total_amount </td>
-//                  <td><a href=''>View</a> </td>
-//                  </tr>
-//              </tbody>";
-//    }
-//    echo "</table>";
-//}
 
 ?>

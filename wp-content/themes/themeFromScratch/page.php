@@ -37,7 +37,6 @@
                 endwhile;
             }
             ?>
-
         </div>
 
         <div class="col-lg-2">

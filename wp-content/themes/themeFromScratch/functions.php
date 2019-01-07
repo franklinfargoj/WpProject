@@ -145,37 +145,5 @@ function orders_columns($columns){
 }
 add_filter('manage_orders_posts_columns','orders_columns');
 
-//Added cart in nav menu in custom way
-add_filter( 'wp_get_nav_menu_items', 'custom_nav_menu_items', 20, 2 );
-
-function custom_nav_menu_items( $items, $menu ){
-    if($menu->slug=='primary-menu-links'){  //display cart only in header
-        $quantity = 0;
-        if(!empty($_SESSION['cart_items'])){
-            foreach ($_SESSION['cart_items'] as $k => $v) {
-                $quantity+= $v['p_qty'];
-            }
-        }
-        $quantity= "<span class='header_cart' style='color:black'>".$quantity."</span>";
-        $msg = "Cart(".$quantity.")";
-        $items[] = _custom_nav_menu_item($msg, get_home_url().'/cart/', 5 );
-    }
-    return $items;
-}
-
-function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
-    $item = new stdClass();
-    $item->title = $title;
-    $item->url = $url;
-    $item->ID = $parent;
-    $item->db_id = $item->ID;
-    $item->menu_order = $order;
-    $item->menu_item_parent = $item->ID;
-    $item->type = '';
-    $item->object = 'Primary menu';
-    $item->object_id = '';
-    $item->classes = array();
-    return $item;
-}
 
 ?>

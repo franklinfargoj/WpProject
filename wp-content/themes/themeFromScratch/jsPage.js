@@ -1,4 +1,5 @@
 jQuery(document).ready(function() {
+
     $("#owl-demo").owlCarousel({
         navigation : true, // Show next and prev buttons
         autoPlay: 3000,
@@ -8,8 +9,8 @@ jQuery(document).ready(function() {
         responsive : {
             480 : { items : 1  }, // from zero to 480 screen width 4 items
             768 : { items : 2  }, // from 480 screen widthto 768 6 items
-            1024 : { items : 3   // from 768 screen width to 1024 8 items
-            }
+            1024 : { items : 3 }  // from 768 screen width to 1024 8 items
+
         },
         itemsDesktop : false,
         itemsDesktopSmall : false,
@@ -38,26 +39,7 @@ jQuery(document).ready(function() {
     $('#confirmation').click(function () {
         window.location='./confirmation/'
     });
-    
-    $('#loginFormoId').submit(function() {
-        var username = $( ".custom_username" ).val();
-        var password = $( ".custom_password" ).val();
-        //alert(ajax_params.ajax_url);
-        jQuery.ajax({
-            type: "POST",
-            datatype : "json",
-            url: ajax_params.ajax_url,
-            data : { action: "userlogin", username : username, password : password},
-            success: function(response) {
-               if(response = "success"){
-                   window.location='./checkout/'
-               }else{
-                   window.location='./login/'
-               }
-            }
-        })
-        return false;
-    });
+
 
 });
 

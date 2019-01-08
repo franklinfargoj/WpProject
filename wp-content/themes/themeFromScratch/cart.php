@@ -3,11 +3,14 @@
 get_header();
 ?>
 
+<body>
+<div class="container">
     <div class="row">
+
+
         <div class="col-lg-2">
             <?php get_sidebar(); ?>
         </div>
-
         <div class="col-lg-8">
             <?php
             if ( have_posts() ) {
@@ -26,11 +29,14 @@ get_header();
             }
             ?>
         </div>
-
         <div class="col-lg-2">
            <?php get_sidebar('right'); ?>
         </div>
+
+
     </div>
+</div>
+</body>
 
 <?php get_footer(); ?>
 

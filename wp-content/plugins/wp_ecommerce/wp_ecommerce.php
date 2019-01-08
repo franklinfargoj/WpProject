@@ -366,8 +366,8 @@ function order_confirmation() {
 
     if($lastid){
         unset($_SESSION["cart_items"]);
-        $template = locate_template('thankyou-template.php');
-        load_template($template);
+        wp_redirect(site_url().'/thank-you/');
+        die();
     }
 }
 add_action('admin_post_confirmation', 'order_confirmation' );
@@ -435,8 +435,7 @@ add_shortcode('frontend_cart','cart_items');
 //function for cart shortcode
 function cart_items(){
     $output = '';
-    $output = '
-               <table class="table">
+    $output = '<table class="table">
                <thead>
                <tr>
                     <th>Product Name</th>
@@ -619,9 +618,9 @@ function login_page(){
     return $output;
 }
 
-add_shortcode('thank_you','thankyou_page');
+add_shortcode('thank_you','thankyou_page_plugin');
 //function for frontend thank you shortcode
-function thankyou_page(){
+function thankyou_page_plugin(){
     $output = '';
     $output .=  '<h4 style="color: #1e7e34">Order placed successfully.</h4>';
     $output .=  '<br>';

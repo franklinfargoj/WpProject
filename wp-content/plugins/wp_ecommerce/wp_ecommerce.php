@@ -619,6 +619,16 @@ function login_page(){
     return $output;
 }
 
+add_shortcode('thank_you','thankyou_page');
+//function for frontend thank you shortcode
+function thankyou_page(){
+    $output = '';
+    $output .=  '<h4 style="color: #1e7e34">Order placed successfully.</h4>';
+    $output .=  '<br>';
+    $output .=  '<h2 style="color: #1e7e34">Thank you for shopping with us.</h2>';
+    return $output;
+}
+
 //access to the session
 function myStartSession() {
     session_start();

@@ -10,9 +10,22 @@
 
 
     <div class="col-lg-8">
-    <h4 style="color: #1e7e34">Order placed successfully.</h4>
-    <br>
-    <h2 style="color: #1e7e34">Thank you for shopping with us.</h2>
+        <?php
+        if ( have_posts() ) {
+            while ( have_posts() ) : the_post();
+                ?>
+                <div class="blog-post">
+                    <?php
+                    if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it.
+                        the_post_thumbnail( 'thumbnail' );
+                    }
+                    ?>
+                    <?php the_content(); ?>
+                </div><!-- /.blog-post -->
+                <?php
+            endwhile;
+        }
+        ?>
     </div>
 
 

@@ -19,40 +19,12 @@ add_theme_support( 'title-tag' );
 //show featured image
 add_theme_support( 'post-thumbnails' );
 
-/*function myEndSession() {
-     session_destroy ();
-}
-add_action('wp_logout', 'myEndSession');
-add_action('wp_login', 'myEndSession');*/
-
 //includes javascript page and Ajax used in JS.
 function my_theme_scripts_function() {
         wp_enqueue_script( 'myscript', get_template_directory_uri() . '/jsPage.js');
         wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
     }
 add_action('wp_enqueue_scripts','my_theme_scripts_function');
-
-//checks if user exist exist and redirects to checkout else returns the login page
-function userlogin(){
-    if($_POST){
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-
-        $login_array = array();
-        $login_array['user_login'] = $username;
-        $login_array['user_password'] = $password;
-        $verify_user = wp_signon($login_array,true);
-
-        if(!is_wp_error($verify_user)){
-            echo json_encode('success');
-        }else{
-            echo json_encode('fail');
-        }
-        die;
-    }
-}
-add_action("wp_ajax_userlogin","userlogin");
-add_action("wp_ajax_nopriv_userlogin","userlogin");
 
 //custom post for corosal
 function create_post_type() {
@@ -144,6 +116,5 @@ function orders_columns($columns){
     return $newColumns;
 }
 add_filter('manage_orders_posts_columns','orders_columns');
-
 
 ?>

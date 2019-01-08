@@ -373,6 +373,7 @@ function order_confirmation() {
 add_action('admin_post_confirmation', 'order_confirmation' );
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
 
+add_shortcode( 'frontend_products','listing_products');
 //function for listing products shortcode.
 function listing_products() {
     if(get_query_var('pagename')==''){
@@ -389,7 +390,7 @@ function listing_products() {
             $output .= '</div><p>';
             $output .='<div> <div><span style="color:#FE980F"></span></div></div>';
             $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>
-                 <input type="hidden" id="custId" name="custId" value='.get_current_user_id().'>
+                        <input type="hidden" id="custId" name="custId" value='.get_current_user_id().'>
                         <a href="javascript:void(0);" class="btn addto-wishlist" data-value='.$post['ID'].'><button>Wishlist</button></a> 
                         </br>
                         </br>';
@@ -397,8 +398,9 @@ function listing_products() {
     }
  return $output;
 }
-add_shortcode( 'frontend_products','listing_products');
 
+
+add_shortcode('frontend_wishlist','wishlist_products');
 //function for wishlist shortcode.
 function wishlist_products(){
 
@@ -428,8 +430,8 @@ function wishlist_products(){
 
     return $output;
 }
-add_shortcode('frontend_wishlist','wishlist_products');
 
+add_shortcode('frontend_cart','cart_items');
 //function for cart shortcode
 function cart_items(){
     $output = '';
@@ -495,9 +497,8 @@ function cart_items(){
     }
     return $output;
 }
-add_shortcode('frontend_cart','cart_items');
 
-
+add_shortcode('checkout','checkout_page');
 // function for checkout shortcode
 function checkout_page(){
     $output ='';
@@ -544,8 +545,8 @@ function checkout_page(){
     }
     return $output;
 }
-add_shortcode('checkout','checkout_page');
 
+add_shortcode('confirmation','order_confiramtion');
 // function for order_confiramtion shortcode
 function order_confiramtion(){
     $output ='';
@@ -592,8 +593,31 @@ function order_confiramtion(){
     $output .='</div> </form>';
     return $output;
 }
-add_shortcode('confirmation','order_confiramtion');
 
+add_shortcode('login_pg','login_page');
+//function for frontend login shortcode
+function login_page(){
+    $output = '';
+    if(!is_user_logged_in()){
+     $output .=  '<form method="post" id="loginFormoId">';
+     $output .=  '<p>';
+     $output .=  '<label for="username">Username/Email</label>';
+     $output .=  '<input type="text" id="custom_username" class="custom_username" name="custom_username">';
+     $output .=  '</p>';
+     $output .=  '<p>';
+     $output .=  '<label for="password">Password</label>';
+     $output .=  '<input type="password" id="custom_password" name="custom_password" class="custom_password">';
+     $output .=  '</p>';
+     $output .=  '<div>
+            <input type="submit" id="submitButton"  name="submitButton">
+        </div>';
+     $output .='</form>';
+     }else{
+        $url = get_home_url();
+        wp_redirect($url);
+    }
+    return $output;
+}
 
 //access to the session
 function myStartSession() {
@@ -762,5 +786,34 @@ function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
     $item->classes = array();
     return $item;
 }
+
+//checks if user exist exist and redirects to checkout else returns the login page
+function userlogin(){
+    if($_POST){
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        $login_array = array();
+        $login_array['user_login'] = $username;
+        $login_array['user_password'] = $password;
+        $verify_user = wp_signon($login_array,true);
+
+        if(!is_wp_error($verify_user)){
+            echo json_encode('success');
+        }else{
+            echo json_encode('fail');
+        }
+        die;
+    }
+}
+add_action("wp_ajax_userlogin","userlogin");
+add_action("wp_ajax_nopriv_userlogin","userlogin");
+
+//includes javascript page and Ajax used in JS.
+function my_plugin_scripts_function() {
+    wp_enqueue_script( 'myscript', plugin_dir_url().'wp_ecommerce/jsPage_plugin.js',array('jquery'));
+    wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+}
+add_action('wp_enqueue_scripts','my_plugin_scripts_function');
 
 ?>

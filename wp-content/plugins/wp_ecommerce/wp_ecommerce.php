@@ -391,6 +391,7 @@ function listing_products() {
             $output .='<div> <div><span style="color:#FE980F"></span></div></div>';
             $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>
                         <input type="hidden" id="custId" name="custId" value='.get_current_user_id().'>
+                        <input type="hidden" id="site_url" name="site_url" value='.site_url().'>
                         <a href="javascript:void(0);" class="btn addto-wishlist" data-value='.$post['ID'].'><button>Wishlist</button></a> 
                         </br>
                         </br>';
@@ -423,7 +424,10 @@ function wishlist_products(){
         $output .= '<tbody><td>'.get_the_title($value).'</td>';
         $output .= '<td>'.get_the_post_thumbnail($value,'thumbnail').'</td>';
         $output .= '<td>'.get_post_meta($value,'my_product_price_value_key', true).'</td>';
-        $output .= '<td><a href="javascript:void(0);" class="" data-value=$value><button>Add to cart</button></a></td>';
+
+        $output .= '<span id="prod_'.$value.'">'.get_post_meta($value, 'my_product_price_value_key', true).'</span>';
+        $output .='<input type="hidden" id="txtNumber'.$value.'" value="1">';
+        $output .= '<td><a href="javascript:void(0);" class="btn add-to-cart" data-value='.$value.'><button>Add to cart</button></a></td>';
         $output .= '<td><a href="javascript:void(0);" class="remove_wishlist" data-value='.$value.'><button>Remove</button></a></td></tbody>';
     }
     $output .='<div></table>';
@@ -758,6 +762,8 @@ function wishlist_remove_product() {
             }
     }
     update_user_meta(get_current_user_id(), 'user_wishlist', json_encode(array_values($wishlist)));
+
+    echo json_encode('product_removed');
     die();
 }
 add_action("wp_ajax_remove_from_wishlist", "wishlist_remove_product");

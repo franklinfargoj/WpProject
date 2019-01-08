@@ -29,7 +29,8 @@ jQuery(document).ready(function($) {
     $('.addto-wishlist').click(function () {
         var product_id = $(this).attr('data-value');
         var custId = $('#custId').val();
-        if(custId != 0){
+        var site_url = $('#site_url').val();
+       if(custId != 0){
             jQuery.ajax({
                 type : "post",
                 dataType : "json",
@@ -37,7 +38,8 @@ jQuery(document).ready(function($) {
                 data : {action: "add_to_wishlist", product_id : product_id}
             })
         }else{
-            window.location.replace("http://10.0.11.43/WpProject/login");
+           alert('Please login!');
+            window.location.replace(site_url);
         }
     });
 
@@ -47,7 +49,10 @@ jQuery(document).ready(function($) {
             type : "post",
             dataType : "json",
             url : ajax_params.ajax_url,
-            data : {action: "remove_from_wishlist", product_id : product_id}
+            data : {action: "remove_from_wishlist", product_id : product_id},
+            success: function (response) {
+                location.reload();
+            }
         })
     });
 
@@ -149,5 +154,6 @@ jQuery(document).ready(function($) {
         })
         return false;
     });
+
 
 });

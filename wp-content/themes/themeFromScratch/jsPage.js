@@ -17,20 +17,7 @@ jQuery(document).ready(function() {
         itemsTablet: false,
         itemsMobile : false
     });
-
-    //redirects on click of Proceed to checkout
-    $('#checkout').click(function () {
-        window.location='./checkout/'
-    });
-
-    $('#login').click(function () {
-        window.location='./login/'
-    });
-
-    //redirects on click of Continue ON Checkout page
-    $('#confirmation').click(function () {
-        window.location='./confirmation/'
-    });
+    
 
 });
 

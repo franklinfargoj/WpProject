@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 
-    function isNumberKey(evt) {
+   function isNumberKey(evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
         if (charCode != 46 && charCode > 31
             && (charCode < 48 || charCode > 57))
@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
         return true;
     }
 
-
+    //Add to cart from cart page and wishlist page
     $('.add-to-cart').click(function () {
         var product_id = $(this).attr('data-value');
         var price = $('#prod_' + product_id).text();
@@ -26,6 +26,7 @@ jQuery(document).ready(function($) {
         })
     });
 
+    //adds product to wishlist page
     $('.addto-wishlist').click(function () {
         var product_id = $(this).attr('data-value');
         var custId = $('#custId').val();
@@ -43,6 +44,7 @@ jQuery(document).ready(function($) {
         }
     });
 
+    //removes product from wishlist page
     $('.remove_wishlist').click(function () {
         var product_id = $(this).attr('data-value');
         jQuery.ajax({
@@ -56,6 +58,7 @@ jQuery(document).ready(function($) {
         })
     });
 
+    //increases the quantity in cart page
     $('.cart_qty_up').click(function () {
         var product_id = $(this).attr('data-value');
         var price = $(this).attr('data-value1');
@@ -81,6 +84,7 @@ jQuery(document).ready(function($) {
         })
     });
 
+    //remove the added from cart
     $('.remove_from_cart').click(function () {
         var product_id = $(this).attr('data-value');
         jQuery.ajax({
@@ -103,6 +107,7 @@ jQuery(document).ready(function($) {
         })
     });
 
+    //decreases the the quantity per product
     $('.cart_qty_down').click(function () {
         var product_id = $(this).attr('data-value');
         jQuery.ajax({
@@ -126,6 +131,7 @@ jQuery(document).ready(function($) {
         window.location='./checkout/'
     });
 
+    //
     $('#login').click(function () {
         window.location='./login/'
     });
@@ -134,7 +140,8 @@ jQuery(document).ready(function($) {
     $('#confirmation').click(function () {
         window.location='./confirmation/'
     });
-    
+
+    //
     $('#loginFormoId').submit(function() {
         var username = $( ".custom_username" ).val();
         var password = $( ".custom_password" ).val();
@@ -154,6 +161,5 @@ jQuery(document).ready(function($) {
         })
         return false;
     });
-
 
 });

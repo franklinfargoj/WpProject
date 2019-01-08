@@ -386,7 +386,7 @@ function listing_products() {
             $output .= '<div>'.$post['post_title'] .'<p>';
             $output .= get_the_post_thumbnail( $post['ID'], 'thumbnail').'<br>';
             $output .= 'Rs.<span id="prod_'.$post['ID'].'">'.get_post_meta($post['ID'], 'my_product_price_value_key', true).'</span>';
-            $output .='&emsp;'.'Qty<INPUT id="txtNumber'.$post['ID'].'" onkeypress="return isNumberKey(event)" type="number" min="1" value="1" style="width: 50px;">';
+            $output .='&emsp;'.'Qty<INPUT type="number" id="txtNumber'.$post['ID'].'"   min="1" value="1" style="width: 50px;">';
             $output .= '</div><p>';
             $output .='<div> <div><span style="color:#FE980F"></span></div></div>';
             $output .= '<a href="javascript:void(0);" class="btn add-to-cart" data-value='.$post['ID'].'><button>Add to cart</button></a>
@@ -643,7 +643,7 @@ function my_user_cart() {
 
     if(!empty($_SESSION['cart_items'])){
         if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
-            $_SESSION['cart_items'][$_POST['product_id']]['p_qty']+=1;
+            $_SESSION['cart_items'][$_POST['product_id']]['p_qty']+=$_POST['quantity'];
         }else{
             $_SESSION['cart_items'][$_POST['product_id']] = array(
                 'p_id'   => $_POST['product_id'],
@@ -826,8 +826,8 @@ add_action("wp_ajax_nopriv_userlogin","userlogin");
 
 //includes javascript page and Ajax used in JS.
 function my_plugin_scripts_function() {
-    wp_enqueue_script( 'myscript', plugin_dir_url().'wp_ecommerce/jsPage_plugin.js',array('jquery'));
-    wp_localize_script( 'myscript', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+    wp_enqueue_script( 'myscript_plugin', plugin_dir_url().'wp_ecommerce/jsPage_plugin.js',array('jquery'));
+    wp_localize_script( 'myscript_plugin', 'ajax_params',array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action('wp_enqueue_scripts','my_plugin_scripts_function');
 

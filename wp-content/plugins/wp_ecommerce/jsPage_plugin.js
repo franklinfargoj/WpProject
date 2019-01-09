@@ -20,6 +20,7 @@ jQuery(document).ready(function($) {
             data : {action: "add_to_cart", product_id : product_id, price: price,quantity: quantity },
             success : function( response ) {
                 console.log(response);
+                //console.log(response.product.p_id);
                 $(".header_cart").html(response.qty_cart);
                 $('.add_cart_'+response.product.p_id).html('<span style="color:#FE980F">' + "Added to the cart!" + '</span>');
             }
@@ -36,7 +37,12 @@ jQuery(document).ready(function($) {
                 type : "post",
                 dataType : "json",
                 url : ajax_params.ajax_url,
-                data : {action: "add_to_wishlist", product_id : product_id}
+                data : {action: "add_to_wishlist", product_id : product_id},
+                success : function (response) {
+                    console.log(response.product_id);
+
+                    $('.add_wishlist_'+response.product_id).html('<span style="color:darkolivegreen">' + "Added to the wishlist!" + '</span>');
+                }
             })
         }else{
            alert('Please login!');

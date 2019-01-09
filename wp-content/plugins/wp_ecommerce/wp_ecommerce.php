@@ -528,6 +528,12 @@ function my_user_wishlist() {
             update_user_meta( get_current_user_id(), 'user_wishlist',json_encode($added_wislist));
         }
     }
+
+    $product_id = array(
+        'product_id' => $_POST['product_id']
+    );
+    echo json_encode($product_id);
+
     die;
 }
 
@@ -824,11 +830,9 @@ function listing_products() {
                         <input type="hidden" id="site_url" name="site_url" value='.site_url().'>
                         <a href="javascript:void(0);" class="btn addto-wishlist" data-value='.$post['ID'].'><button>Wishlist</button></a> 
                         <span class="add_cart_'.$post['ID'].'"></span>
+                        <span class="add_wishlist_'.$post['ID'].'"></span>
                         </br>
                         </br>';
-
-
-            $quantity= "<span class='header_cart' style='color:black'>".$quantity."</span>";
         }
     }
     return $output;

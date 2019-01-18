@@ -373,15 +373,15 @@ function order_confirmation() {
 add_action('admin_post_confirmation', 'order_confirmation' );
 add_action('admin_post_nopriv_confirmation', 'order_confirmation' );
 
-//access to the session
-function myStartSession() {
-    session_start();
-}
-add_action('init', 'myStartSession', 1);
-
+/*
+ *
+ *
+ nav menu for header
+ *
+ *
+ */
 //Added cart in nav menu in custom way
 add_filter( 'wp_get_nav_menu_items', 'custom_nav_menu_items', 20, 2 );
-
 function custom_nav_menu_items( $items, $menu ){
     if($menu->slug=='primary-menu-links'){  //display cart only in header
         $quantity = 0;
@@ -412,6 +412,21 @@ function _custom_nav_menu_item( $title, $url, $order=0, $parent = 5 ){
     return $item;
 }
 
+/*
+ *
+ *
+ *
+ *  Session start ,javascript and Ajax hooked
+ *
+ *
+ *
+ */
+//access to the session
+function myStartSession() {
+    session_start();
+}
+add_action('init', 'myStartSession', 1);
+
 //includes javascript page and Ajax used in JS.
 function my_plugin_scripts_function() {
     wp_enqueue_script( 'myscript_plugin', plugin_dir_url().'wp_ecommerce/jsPage_plugin.js',array('jquery'));
@@ -419,6 +434,15 @@ function my_plugin_scripts_function() {
 }
 add_action('wp_enqueue_scripts','my_plugin_scripts_function');
 
+/*
+ *
+ *
+ *
+ *  Ajax functionality
+ *
+ *
+ *
+ */
 //Reduce array by prouct id from cart session
 function downgrade_cart_qty(){
     // print_r($_SESSION['cart_items'][$_POST['product_id']]['p_qty']);die;
@@ -446,9 +470,9 @@ function downgrade_cart_qty(){
 add_action("wp_ajax_cart_qty_decrease","downgrade_cart_qty");
 add_action("wp_ajax_nopriv_cart_qty_decrease","downgrade_cart_qty");
 
-//Set session for products added to cart
-function my_user_cart() {
 
+//Set session for products added to cart and increase the cart quantity
+function my_user_cart() {
     if(!empty($_SESSION['cart_items'])){
         if(array_key_exists($_POST['product_id'],$_SESSION['cart_items'])){
             $_SESSION['cart_items'][$_POST['product_id']]['p_qty']+=$_POST['quantity'];
@@ -478,14 +502,12 @@ function my_user_cart() {
         'total' => $total,
         'qty_cart'=>$qty_cart
     );
-
     // echo json_encode($_SESSION['cart_items'][$_POST['product_id']]);
     echo json_encode($cart_price);
     die;
 }
 add_action("wp_ajax_add_to_cart", "my_user_cart");
 add_action("wp_ajax_nopriv_add_to_cart", "my_user_cart");
-
 add_action("wp_ajax_cart_qty_increase","my_user_cart");
 add_action("wp_ajax_nopriv_cart_qty_increase","my_user_cart");
 
@@ -515,6 +537,8 @@ function out_of_cart() {
 add_action("wp_ajax_delete_from_cart", "out_of_cart");
 add_action("wp_ajax_nopriv_delete_from_cart", "out_of_cart");
 
+
+//adds product in wishlist
 function my_user_wishlist() {
     $product_ids = get_user_meta(get_current_user_id(), 'user_wishlist', true);
     if(empty($product_ids)){
@@ -533,13 +557,13 @@ function my_user_wishlist() {
         'product_id' => $_POST['product_id']
     );
     echo json_encode($product_id);
-
     die;
 }
-
 add_action("wp_ajax_add_to_wishlist", "my_user_wishlist");
 add_action("wp_ajax_nopriv_add_to_wishlist", "my_user_wishlist");
 
+
+//remove product from wishlist page
 function wishlist_remove_product() {
     $wishlist = json_decode(get_user_meta(get_current_user_id(), 'user_wishlist', true));
 
@@ -556,7 +580,8 @@ function wishlist_remove_product() {
 add_action("wp_ajax_remove_from_wishlist", "wishlist_remove_product");
 add_action("wp_ajax_nopriv_remove_from_wishlist", "wishlist_remove_product");
 
-//checks if user exist exist and redirects to checkout else returns the login page
+
+//checks if user exist and redirects to checkout else returns the login page
 function userlogin(){
     if($_POST){
         $username = $_POST['username'];
@@ -578,8 +603,19 @@ function userlogin(){
 add_action("wp_ajax_userlogin","userlogin");
 add_action("wp_ajax_nopriv_userlogin","userlogin");
 
-add_shortcode('frontend_wishlist','wishlist_products');
+
+/*
+ *
+ *
+ *
+ *
+ *Shortcode
+ *
+ *
+ *
+ */
 //function for wishlist shortcode.
+add_shortcode('frontend_wishlist','wishlist_products');
 function wishlist_products(){
 
     $wishlist = json_decode(get_user_meta(get_current_user_id(), 'user_wishlist', true));
@@ -612,8 +648,8 @@ function wishlist_products(){
     return $output;
 }
 
-add_shortcode('frontend_cart','cart_items');
 //function for cart shortcode
+add_shortcode('frontend_cart','cart_items');
 function cart_items(){
     $output = '';
     $output = '<table class="table">
@@ -678,8 +714,8 @@ function cart_items(){
     return $output;
 }
 
-add_shortcode('checkout','checkout_page');
 // function for checkout shortcode
+add_shortcode('checkout','checkout_page');
 function checkout_page(){
     $output ='';
     if ( is_user_logged_in() ) {
@@ -726,8 +762,8 @@ function checkout_page(){
     return $output;
 }
 
-add_shortcode('confirmation','order_confiramtion');
 // function for order_confiramtion shortcode
+add_shortcode('confirmation','order_confiramtion');
 function order_confiramtion(){
     $output ='';
     $output .='<h3>Order Confirmation<h3>';
@@ -763,7 +799,6 @@ function order_confiramtion(){
         }
     }
     $output .='<div class="form-row">';
-
     $output .='<input type="hidden" id="cart_item" name="cart_item" value="'.$total_quantity.'">';
     $output .='<span style="margin-left: 320px;">'.$total_quantity.' - ITEMS</span>';
     $output .='<input type="hidden" name="total_price" id="total_price" value="'.$total_price.'">';
@@ -774,8 +809,8 @@ function order_confiramtion(){
     return $output;
 }
 
-add_shortcode('login_pg','login_page');
 //function for frontend login shortcode
+add_shortcode('login_pg','login_page');
 function login_page(){
     $output = '';
     if(!is_user_logged_in()){
@@ -799,8 +834,8 @@ function login_page(){
     return $output;
 }
 
-add_shortcode('thank_you','thankyou_page_plugin');
 //function for frontend thank you shortcode
+add_shortcode('thank_you','thankyou_page_plugin');
 function thankyou_page_plugin(){
     $output = '';
     $output .=  '<h4 style="color: #1e7e34">Order placed successfully.</h4>';
@@ -809,8 +844,8 @@ function thankyou_page_plugin(){
     return $output;
 }
 
-add_shortcode( 'frontend_products','listing_products');
 //function for listing products shortcode.
+add_shortcode( 'frontend_products','listing_products');
 function listing_products() {
     if(get_query_var('pagename')==''){
         global $wpdb;
